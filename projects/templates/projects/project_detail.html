@@ -1,0 +1,81 @@
+{% extends "projects/base.html" %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+
+<div class="card p-4">
+
+    <h1>{{ project.title }}</h1>
+    <p class="text-muted">{{ project.functionality }}</p>
+
+    <div class="mb-3">
+        <span class="badge bg-primary">
+            {{ project.get_project_type_display }}
+        </span>
+        <span class="badge bg-secondary">
+            Náročnosť {{ project.difficulty }}/5
+        </span>
+    </div>
+
+    <hr>
+
+    <!-- PRIEMERNÉ HODNOTENIE -->
+    <p>
+        <strong>Priemerné hodnotenie:</strong>
+        {% if average_rating %}
+            {{ average_rating|floatformat:1 }}/5
+        {% else %}
+            zatiaľ nehodnotené
+        {% endif %}
+    </p>
+
+    <hr>
+
+    <!-- FORMULÁR NA HODNOTENIE -->
+    {% if user.is_authenticated %}
+        <form method="post" class="mb-3">
+            {% csrf_token %}
+
+            <label for="rating"><strong>Tvoje hodnotenie:</strong></label>
+
+            <select name="rating" id="rating"
+                    class="form-select w-auto d-inline-block ms-2">
+                {% for i in "12345" %}
+                    <option value="{{ i }}"
+                        {% if user_rating and user_rating.value == i|add:"0" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ i }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-primary ms-2">
+                Uložiť
+            </button>
+        </form>
+    {% else %}
+        <p class="text-muted">
+            Pre hodnotenie sa musíš prihlásiť.
+        </p>
+    {% endif %}
+
+    <hr>
+
+    <!-- UPRAVIŤ PROJEKT – LEN AUTOR -->
+    {% if user.is_authenticated and user == project.author %}
+        <a href="{% url 'project_edit' project.pk %}"
+           class="btn btn-warning w-100 mb-2">
+            Upraviť projekt
+        </a>
+    {% endif %}
+
+    <a href="{% url 'project_list' %}" class="btn btn-outline-secondary w-100">
+        Späť na projekty
+    </a>
+
+</div>
+
+{% endblock %}

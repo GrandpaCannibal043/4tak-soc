@@ -1,0 +1,57 @@
+{% extends "projects/base.html" %}
+
+{% block title %}4tak – Domov{% endblock %}
+
+{% block content %}
+
+<section class="hero text-center">
+    <h1>Platforma pre projekty SOČ</h1>
+    <p>
+        Miesto, kde študenti zdieľajú svoje SOČ projekty.
+    </p>
+
+    <!-- CTA BUTTONY -->
+    <div class="actions mt-4 d-flex justify-content-center gap-3">
+        <a href="{% url 'project_list' %}" class="btn btn-primary">
+            Zobraziť projekty
+        </a>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'add_project' %}" class="btn btn-primary">
+                Pridať projekt
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary">
+                Pridať projekt
+            </a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- OSTROVČEKY -->
+<section class="features">
+
+    <div class="feature">
+        <h3>📌 Reálne projekty</h3>
+        <p>
+            Prehľad skutočných SOČ prác od študentov z rôznych oblastí.
+        </p>
+    </div>
+
+    <div class="feature">
+        <h3>⚙️ Popis funkcionality</h3>
+        <p>
+            Každý projekt obsahuje jasný opis toho, čo rieši a ako funguje.
+        </p>
+    </div>
+
+    <div class="feature">
+        <h3>🔥 Náročnosť</h3>
+        <p>
+            Autor určuje náročnosť projektu – vhodné aj ako inšpirácia.
+        </p>
+    </div>
+
+</section>
+
+{% endblock %}

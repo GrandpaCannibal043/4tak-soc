@@ -1,0 +1,75 @@
+{% extends "projects/base.html" %}
+
+{% block title %}Pridať projekt{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="card" style="max-width: 700px; width: 100%;">
+
+        <h1 class="mb-3">Pridať projekt</h1>
+        <p class="text-muted mb-4">
+            Vyplň informácie o svojom SOČ projekte. Projekt bude po odoslaní čakať na schválenie administrátorom.
+        </p>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- TITLE -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    Názov projektu
+                </label>
+                {{ form.title }}
+            </div>
+
+            <!-- FUNCTIONALITY -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    Popis funkcionality
+                </label>
+                {{ form.functionality }}
+            </div>
+
+            <!-- TYPE + DIFFICULTY -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">
+                        Typ projektu
+                    </label>
+                    {{ form.project_type }}
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">
+                        Náročnosť
+                    </label>
+                    {{ form.difficulty }}
+                </div>
+            </div>
+
+            <!-- IMAGE -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    Obrázok projektu (nepovinné)
+                </label>
+                {{ form.image }}
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+                    Späť
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    Uložiť projekt
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

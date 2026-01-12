@@ -1,0 +1,20 @@
+{% extends "projects/base.html" %}
+{% block title %}Čakajúce úpravy{% endblock %}
+
+{% block content %}
+<h1>Čakajúce úpravy projektov</h1>
+
+{% for edit in edits %}
+<div class="card p-3 mb-3">
+    <h5>{{ edit.title }}</h5>
+    <p class="text-muted">Autor: {{ edit.author.username }}</p>
+
+    <a href="{% url 'approve_project_edit' edit.id %}"
+       class="btn btn-success">
+        Skontrolovať a schváliť
+    </a>
+</div>
+{% empty %}
+<p>Žiadne čakajúce úpravy.</p>
+{% endfor %}
+{% endblock %}

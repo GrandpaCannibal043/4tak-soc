@@ -1,0 +1,118 @@
+{% extends "projects/base.html" %}
+
+{% block title %}Registrácia{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="card" style="max-width: 480px; width: 100%;">
+
+        <h1 class="mb-3">Registrácia</h1>
+        <p class="text-muted mb-4">
+            Vytvor si účet a pridávaj svoje SOČ projekty.
+        </p>
+
+        <!-- 🔴 GLOBÁLNE CHYBY -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- USERNAME -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    Používateľské meno
+                </label>
+
+                {{ form.username }}
+
+                {% if form.username.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ form.username.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- PASSWORD 1 -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    Heslo
+                </label>
+
+                <div class="password-wrapper">
+                    {{ form.password1 }}
+
+                    <button type="button"
+                            class="toggle-password"
+                            onclick="togglePassword('id_password1', this)">
+                        👁
+                    </button>
+                </div>
+
+                {% if form.password1.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ form.password1.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- PASSWORD 2 -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    Potvrdenie hesla
+                </label>
+
+                <div class="password-wrapper">
+                    {{ form.password2 }}
+
+                    <button type="button"
+                            class="toggle-password"
+                            onclick="togglePassword('id_password2', this)">
+                        👁
+                    </button>
+                </div>
+
+                {% if form.password2.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ form.password2.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary">
+                    Zaregistrovať sa
+                </button>
+            </div>
+        </form>
+
+        <div class="text-center text-muted">
+            Už máš účet?
+            <a href="{% url 'login' %}" class="fw-semibold text-decoration-none">
+                Prihlás sa
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<!-- 👁️ ZOBRAZIŤ / SKRYŤ HESLO -->
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🙈";
+    } else {
+        input.type = "password";
+        btn.textContent = "👁";
+    }
+}
+</script>
+
+{% endblock %}

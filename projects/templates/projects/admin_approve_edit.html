@@ -1,0 +1,32 @@
+{% extends "projects/base.html" %}
+{% block title %}Schválenie úpravy{% endblock %}
+
+{% block content %}
+<h1>Porovnanie projektu</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Pôvodný projekt</h4>
+        <p><strong>{{ project.title }}</strong></p>
+        <p>{{ project.functionality }}</p>
+        <p>{{ project.get_project_type_display }} | {{ project.difficulty }}/5</p>
+    </div>
+
+    <div class="col-md-6">
+        <h4>Navrhovaná úprava</h4>
+        <p><strong>{{ edit.title }}</strong></p>
+        <p>{{ edit.functionality }}</p>
+        <p>{{ edit.get_project_type_display }} | {{ edit.difficulty }}/5</p>
+    </div>
+</div>
+
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">
+        Schváliť úpravu
+    </button>
+    <a href="{% url 'admin_project_edits' %}" class="btn btn-secondary">
+        Späť
+    </a>
+</form>
+{% endblock %}

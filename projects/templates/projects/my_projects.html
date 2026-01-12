@@ -1,0 +1,71 @@
+{% extends "projects/base.html" %}
+
+{% block title %}Moje projekty{% endblock %}
+
+{% block content %}
+
+<h1>Moje projekty</h1>
+
+<hr>
+
+<h3>Schválené projekty</h3>
+
+{% if approved_projects %}
+    {% for project in approved_projects %}
+        <div class="card p-3 mb-3">
+            <h5>{{ project.title }}</h5>
+            <p class="text-muted">{{ project.functionality|truncatechars:120 }}</p>
+
+            <a href="{% url 'project_detail' project.pk %}"
+               class="btn btn-sm btn-primary">
+                Detail
+            </a>
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="text-muted">Nemáš žiadne schválené projekty.</p>
+{% endif %}
+
+<hr>
+
+<h3>Čakajúce nové projekty</h3>
+
+{% if pending_projects %}
+    {% for project in pending_projects %}
+        <div class="card p-3 mb-3 border-warning">
+            <h5>{{ project.title }}</h5>
+            <p class="text-muted">
+                Tento projekt čaká na schválenie administrátorom.
+            </p>
+
+            <span class="badge bg-warning text-dark">
+                čaká na schválenie
+            </span>
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="text-muted">Žiadne čakajúce nové projekty.</p>
+{% endif %}
+
+<hr>
+
+<h3>Čakajúce úpravy projektov</h3>
+
+{% if pending_edits %}
+    {% for edit in pending_edits %}
+        <div class="card p-3 mb-3 border-warning">
+            <h5>{{ edit.title }}</h5>
+            <p class="text-muted">
+                Úprava projektu: {{ edit.original_project.title }}
+            </p>
+
+            <span class="badge bg-warning text-dark">
+                čaká na schválenie
+            </span>
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="text-muted">Žiadne čakajúce úpravy.</p>
+{% endif %}
+
+{% endblock %}

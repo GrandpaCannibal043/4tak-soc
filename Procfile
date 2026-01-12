@@ -1,0 +1,1 @@
+web: gunicorn _4tak.wsgi
