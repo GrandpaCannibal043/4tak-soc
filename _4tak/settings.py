@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "fourtak-soc.onrender.com",
+    "4tak.eu",
     "localhost",
     "127.0.0.1",
 ]
@@ -145,3 +146,14 @@ import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://fourtak-soc.onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://4tak.eu",
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
