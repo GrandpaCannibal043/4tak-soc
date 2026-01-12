@@ -1,0 +1,65 @@
+/* ===== HLAVNÉ POZADIE ===== */
+body {
+    background-color: #0b0b0b;
+}
+
+/* ===== HLAVIČKA ===== */
+#header {
+    background-color: #000000;
+    border-bottom: 3px solid #22c55e;
+}
+
+#header h1, #header a {
+    color: white !important;
+}
+
+/* ===== NAVIGATION ===== */
+.module h2, .module caption {
+    background-color: #000000;
+    color: #22c55e;
+}
+
+a {
+    color: #22c55e;
+}
+
+a:hover {
+    color: #16a34a;
+}
+
+/* ===== TABUĽKY ===== */
+#content-main {
+    background-color: #0f172a;
+    border-radius: 10px;
+}
+
+table {
+    background-color: #020617;
+}
+
+th {
+    background-color: #000000;
+    color: #22c55e;
+}
+
+td {
+    color: #e5e7eb;
+}
+
+/* ===== BUTTONY ===== */
+.button, input[type=submit], .submit-row input {
+    background-color: #22c55e;
+    border: none;
+    color: black;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+.button:hover {
+    background-color: #16a34a;
+}
+
+/* ===== ODSTRÁNENIE DJANGO FOOTER TEXTU ===== */
+#footer {
+    display: none;
+}
