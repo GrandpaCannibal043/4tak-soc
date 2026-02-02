@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.core.paginator import Paginator
 from django.db.models import Avg
+from .forms import CustomUserCreationForm
 
 from .models import Project, Rating, ProjectEdit
 from .forms import ProjectForm
@@ -46,7 +47,6 @@ def project_list(request):
         'selected_type': project_type,
         'selected_difficulty': difficulty,
     })
-
 
 # =========================
 # DETAIL PROJEKTU + HODNOTENIE
@@ -153,30 +153,28 @@ def my_projects(request):
         'pending_edits': pending_edits,
     })
 
-
-
 # =========================
-# REGISTRÁCIA
+# REGISTRÁCIA (S CAPTCHA)
 # =========================
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
 
     for field in form.fields.values():
         field.widget.attrs.update({
             'class': 'form-control'
         })
 
-    if request.method == 'POST' and form.is_valid():
-        user = form.save()
-        login(request, user)
-        return redirect('index')
-
     return render(request, 'projects/register.html', {
         'form': form
     })
+
 
 
 # =========================

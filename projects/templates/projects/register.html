@@ -83,6 +83,24 @@
                 {% endif %}
             </div>
 
+                    <!-- CAPTCHA -->
+<!-- CAPTCHA -->
+<div class="mb-4">
+    <label class="form-label fw-semibold">
+        Overenie (captcha)
+    </label>
+
+    <div class="captcha-wrapper">
+        {{ form.captcha }}
+    </div>
+
+    {% if form.captcha.errors %}
+        <div class="text-danger small mt-1">
+            {{ form.captcha.errors }}
+        </div>
+    {% endif %}
+</div>
+
             <div class="d-grid mb-3">
                 <button type="submit" class="btn btn-primary">
                     Zaregistrovať sa
@@ -96,6 +114,7 @@
                 Prihlás sa
             </a>
         </div>
+
 
     </div>
 </div>

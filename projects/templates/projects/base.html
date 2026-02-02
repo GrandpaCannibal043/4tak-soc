@@ -35,10 +35,10 @@
         HEADER
         ========================= */
         header {
+            position: relative;
             background-color: var(--black);
             border-bottom: 3px solid var(--green);
             padding: 18px 0;
-            text-align: center;
         }
 
         header h2 {
@@ -83,6 +83,51 @@
         nav a:hover::after {
             width: 100%;
         }
+
+        /* =========================
+        HAMBURGER DROPDOWN MENU
+        ========================= */
+
+        .hamburger {
+            font-size: 26px;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* malé menu */
+        .nav-menu {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background-color: #000;
+            border: 2px solid var(--green);
+            border-radius: 14px;
+            padding: 14px 20px;
+            min-width: 180px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: none;
+            z-index: 1000;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 10px 0;
+            color: #e5e7eb;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .nav-menu a:hover {
+            color: var(--green);
+        }
+
+        /* zobrazenie */
+        .nav-menu.show {
+            display: block;
+        }
+
 
         /* ❌ ZRUŠENÝ CTA ŠTÝL V HEADERI */
         /* nav a.cta { ... } ZÁMERNE ODSTRÁNENÉ */
@@ -253,6 +298,32 @@
             font-size: 14px;
             margin-top: 80px;
         }
+
+        /* =========================
+            CAPTCHA – REGISTRÁCIA
+        ========================= */
+
+        .captcha-wrapper img {
+            display: block;
+            margin-bottom: 10px;
+            height: 60px;           /* zväčšenie obrázka */
+            max-width: 100%;
+        }
+
+        .captcha-wrapper input {
+            width: 100%;
+            font-size: 18px;        /* väčší text */
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .captcha-wrapper input:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
+        }
+
     </style>
 </head>
 
@@ -273,22 +344,26 @@ function togglePassword(inputId, btn) {
 <body>
 
 <header>
-    <h2>4tak</h2>
+    <div style="display:flex; align-items:center; justify-content:space-between; max-width:1100px; margin:0 auto;">
+        <h2>4tak</h2>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </div>
 
-    <nav>
+    <div id="navMenu" class="nav-menu">
         <a href="{% url 'index' %}">Domov</a>
         <a href="{% url 'project_list' %}">Projekty</a>
 
         {% if user.is_authenticated %}
-            <a href="{% url 'add_project' %}" class="cta">Pridať projekt</a>
+            <a href="{% url 'add_project' %}">Pridať projekt</a>
             <a href="{% url 'my_projects' %}">Moje projekty</a>
             <a href="{% url 'logout' %}">Odhlásiť</a>
         {% else %}
             <a href="{% url 'login' %}">Prihlásenie</a>
             <a href="{% url 'register' %}">Registrácia</a>
         {% endif %}
-    </nav>
+    </div>
 </header>
+
 
 <div class="container">
     {% block content %}{% endblock %}
@@ -297,6 +372,13 @@ function togglePassword(inputId, btn) {
 <footer>
     © 2026 4tak – SOČ platforma | Študentský projekt
 </footer>
+
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
+
 
 </body>
 </html>
