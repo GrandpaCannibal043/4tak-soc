@@ -48,6 +48,16 @@
             margin: 0;
         }
 
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px; /* 👈 kľúčové */
+        }
+
+
         /* =========================
         NAVIGÁCIA
         ========================= */
@@ -344,7 +354,7 @@ function togglePassword(inputId, btn) {
 <body>
 
 <header>
-    <div style="display:flex; align-items:center; justify-content:space-between; max-width:1100px; margin:0 auto;">
+    <div class="header-inner">
         <h2>4tak</h2>
         <div class="hamburger" onclick="toggleMenu()">☰</div>
     </div>
