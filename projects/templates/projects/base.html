@@ -27,9 +27,17 @@
         body {
             margin: 0;
             font-family: "Inter", Arial, Helvetica, sans-serif;
-            background-color: var(--gray-bg);
             color: #0f172a;
-        }
+
+            /* jemný tmavší gradient podklad */
+            background:
+                radial-gradient(
+                    ellipse at top,
+                    #f8fafc 0%,
+                    #f1f5f9 55%,
+                    #f1f5f9 100%
+        );
+}
 
         /* =========================
         HEADER
@@ -385,6 +393,45 @@
             border-color: #22c55e;
             box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
         }
+
+        /* =========================
+        AMBIENT GLOW POZADIE
+        ========================= */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+
+            background:
+                radial-gradient(
+                    circle at top,
+                    rgba(34, 197, 94, 0.12),
+                    transparent 45%
+        );
+}
+
+        header,
+        .container,
+        footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card,
+.feature {
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.08),
+        0 0 0 1px rgba(0,0,0,0.02);
+}
+
+.card:hover,
+.feature:hover {
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.12),
+        0 0 40px rgba(34,197,94,0.12);
+}
 
 
 
