@@ -2,15 +2,31 @@ from django.contrib import admin
 from .models import Project, ProjectEdit, Rating
 
 
+# =========================
+# SPOLOČNÝ ADMIN MIXIN (CSS)
+# =========================
+class AdminStyleMixin(admin.ModelAdmin):
+    class Media:
+        css = {
+            "all": ("admin/custom_admin.css",)
+        }
+
+
+# =========================
+# PROJECT
+# =========================
 @admin.register(Project)
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(AdminStyleMixin):
     list_display = ('title', 'author', 'approved', 'created_at')
     list_filter = ('approved', 'project_type', 'difficulty')
     search_fields = ('title', 'author__username')
 
 
+# =========================
+# PROJECT EDIT
+# =========================
 @admin.register(ProjectEdit)
-class ProjectEditAdmin(admin.ModelAdmin):
+class ProjectEditAdmin(AdminStyleMixin):
     list_display = (
         'original_project',
         'author',
@@ -44,8 +60,11 @@ class ProjectEditAdmin(admin.ModelAdmin):
             project.save()
 
 
+# =========================
+# RATING
+# =========================
 @admin.register(Rating)
-class RatingAdmin(admin.ModelAdmin):
+class RatingAdmin(AdminStyleMixin):
     list_display = ('project', 'user', 'value', 'created_at')
     list_filter = ('value',)
     search_fields = ('project__title', 'user__username')

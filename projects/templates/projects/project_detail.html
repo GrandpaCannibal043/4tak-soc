@@ -22,11 +22,6 @@
     <!-- NÁZOV -->
     <h1>{{ project.title }}</h1>
 
-    <!-- POPIS -->
-    <p class="text-muted">
-        {{ project.functionality }}
-    </p>
-
     <!-- BADGES -->
     <div class="mb-3">
         <span class="badge bg-primary">
@@ -36,6 +31,36 @@
             Náročnosť {{ project.difficulty }}/5
         </span>
     </div>
+
+    <!-- AUTOR -->
+    <p class="text-muted mb-1">
+        <strong>Autor:</strong> {{ project.author.username }}
+    </p>
+
+    <!-- TRIEDA -->
+    {% if project.school_class %}
+        <p class="text-muted mb-1">
+            <strong>Trieda:</strong> {{ project.school_class }}
+        </p>
+    {% endif %}
+
+    <hr>
+
+    <!-- POPIS PROJEKTU -->
+    <p class="text-muted">
+        {{ project.functionality }}
+    </p>
+
+    <hr>
+
+    <!-- PDF DOKUMENTÁCIA -->
+    {% if project.documentation_pdf %}
+        <a href="{{ project.documentation_pdf.url }}"
+           target="_blank"
+           class="btn btn-primary w-100 mb-3">
+            SOČ dokumentácia
+        </a>
+    {% endif %}
 
     <hr>
 
@@ -86,12 +111,12 @@
     <!-- UPRAVIŤ PROJEKT – LEN AUTOR -->
     {% if user.is_authenticated and user == project.author %}
         <a href="{% url 'project_edit' project.pk %}"
-           class="btn btn-warning w-100 mb-2">
+           class="btn btn-primary w-100 mb-3">
             Upraviť projekt
         </a>
     {% endif %}
 
-    <!-- SPÄŤ -->
+    <!-- SPÄŤ – JEDINÉ OUTLINE -->
     <a href="{% url 'project_list' %}"
        class="btn btn-outline-secondary w-100">
         Späť na projekty

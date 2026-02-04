@@ -2,69 +2,111 @@
 {% block title %}Upraviť projekt{% endblock %}
 
 {% block content %}
-<div class="card p-4">
+<div class="d-flex justify-content-center">
+    <div class="card p-4" style="max-width: 700px; width: 100%;">
 
-    <h2>Úprava projektu: {{ project.title }}</h2>
+        <h2 class="mb-2">Upraviť projekt</h2>
 
-    <p class="text-muted">
-        Úprava musí byť schválená administrátorom.
-        Pôvodný projekt zostane viditeľný, kým nebude schválená.
-    </p>
+        <p class="text-muted mb-4">
+            Úprava musí byť schválená administrátorom.
+            Pôvodný projekt zostane viditeľný, kým nebude úprava schválená.
+        </p>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        <div class="mb-3">
-            <label class="form-label">Názov</label>
-            <input type="text" name="title" class="form-control"
-                   value="{{ project.title }}" required>
-        </div>
+            <!-- NÁZOV -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Názov projektu</label>
+                <input type="text"
+                       name="title"
+                       class="form-control"
+                       value="{{ project.title }}"
+                       required>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Popis</label>
-            <textarea name="functionality" class="form-control"
-                      rows="4" required>{{ project.functionality }}</textarea>
-        </div>
+            <!-- POPIS -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Popis projektu</label>
+                <textarea name="functionality"
+                          class="form-control"
+                          rows="5"
+                          required>{{ project.functionality }}</textarea>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Typ projektu</label>
-            <select name="project_type" class="form-select">
-                {% for key, label in project.PROJECT_TYPE_CHOICES %}
-                    <option value="{{ key }}"
-                        {% if project.project_type == key %}selected{% endif %}>
-                        {{ label }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+            <!-- TRIEDA -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Trieda</label>
+                <select name="school_class" class="form-select" required>
+                    {% for value, label in project.CLASS_CHOICES %}
+                        <option value="{{ value }}"
+                            {% if project.school_class == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Náročnosť</label>
-            <select name="difficulty" class="form-select">
-                {% for i in "12345" %}
-                    <option value="{{ i }}"
-                        {% if project.difficulty == i|add:"0" %}selected{% endif %}>
-                        {{ i }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+            <!-- TYP + NÁROČNOSŤ -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Typ projektu</label>
+                    <select name="project_type" class="form-select" required>
+                        {% for key, label in project.PROJECT_TYPE_CHOICES %}
+                            <option value="{{ key }}"
+                                {% if project.project_type == key %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <div class="mb-3">
-            <label class="form-label">Nový obrázok (voliteľné)</label>
-            <input type="file" name="image" class="form-control">
-        </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Náročnosť</label>
+                    <select name="difficulty" class="form-select" required>
+                        {% for value, label in project.DIFFICULTY_CHOICES %}
+                            <option value="{{ value }}"
+                                {% if project.difficulty == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
 
-        <button type="submit" class="btn btn-primary">
-            Odoslať úpravu na schválenie
-        </button>
+            <!-- OBRÁZOK -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    Nový obrázok (nepovinné)
+                </label>
+                <input type="file" name="image" class="form-control">
+            </div>
 
-        <a href="{% url 'project_detail' project.pk %}"
-           class="btn btn-secondary ms-2">
-            Zrušiť
-        </a>
+            <!-- PDF -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    Nová SOČ dokumentácia (PDF, nepovinné)
+                </label>
+                <input type="file"
+                       name="documentation_pdf"
+                       class="form-control"
+                       accept=".pdf">
+            </div>
 
-    </form>
+            <!-- BUTTONS -->
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'project_detail' project.pk %}"
+                   class="btn btn-outline-secondary">
+                    Zrušiť
+                </a>
 
+                <button type="submit" class="btn btn-success">
+                    Odoslať úpravy
+                </button>
+            </div>
+
+        </form>
+
+    </div>
 </div>
 {% endblock %}

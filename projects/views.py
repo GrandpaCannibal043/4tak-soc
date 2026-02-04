@@ -1,17 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.core.paginator import Paginator
 from django.db.models import Avg
-from .forms import CustomUserCreationForm
+from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Project, Rating, ProjectEdit
-from .forms import ProjectForm
+from .forms import ProjectForm, CustomUserCreationForm
 
 
 # =========================
-# HLAVNÁ STRÁNKA (INDEX)
+# HLAVNÁ STRÁNKA
 # =========================
 def index(request):
     projects = Project.objects.filter(approved=True).order_by('-created_at')
@@ -21,19 +21,27 @@ def index(request):
 
 
 # =========================
-# ZOZNAM PROJEKTOV + FILTRE + STRÁNKOVANIE
+# ZOZNAM PROJEKTOV
 # =========================
 def project_list(request):
     projects = Project.objects.filter(approved=True)
 
     project_type = request.GET.get('type')
     difficulty = request.GET.get('difficulty')
+    author = request.GET.get('author')
+    school_class = request.GET.get('school_class')
 
     if project_type:
         projects = projects.filter(project_type=project_type)
 
     if difficulty:
         projects = projects.filter(difficulty=difficulty)
+
+    if author:
+        projects = projects.filter(author__username__icontains=author)
+
+    if school_class:
+        projects = projects.filter(school_class=school_class)
 
     projects = projects.order_by('-created_at')
 
@@ -46,7 +54,12 @@ def project_list(request):
         'page_obj': page_obj,
         'selected_type': project_type,
         'selected_difficulty': difficulty,
+        'selected_author': author,
+        'selected_class': school_class,
+        'class_choices': Project.CLASS_CHOICES,
     })
+
+
 
 # =========================
 # DETAIL PROJEKTU + HODNOTENIE
@@ -55,7 +68,6 @@ def project_list(request):
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk, approved=True)
 
-    # uloženie / aktualizácia hodnotenia
     if request.method == "POST":
         value = int(request.POST.get("rating"))
 
@@ -64,7 +76,6 @@ def project_detail(request, pk):
             user=request.user,
             defaults={"value": value}
         )
-
         return redirect('project_detail', pk=project.pk)
 
     average_rating = project.ratings.aggregate(avg=Avg('value'))['avg']
@@ -91,7 +102,7 @@ def add_project(request):
         if form.is_valid():
             project = form.save(commit=False)
             project.author = request.user
-            project.approved = False  # čaká na admina
+            project.approved = False
             project.save()
             return render(request, 'projects/project_pending.html')
     else:
@@ -103,7 +114,7 @@ def add_project(request):
 
 
 # =========================
-# ÚPRAVA PROJEKTU (VYTVORÍ EDIT)
+# ÚPRAVA PROJEKTU → VYTVORÍ ProjectEdit
 # =========================
 @login_required
 def project_edit(request, pk):
@@ -114,9 +125,11 @@ def project_edit(request, pk):
             original_project=project,
             title=request.POST.get("title"),
             functionality=request.POST.get("functionality"),
+            school_class=request.POST.get("school_class"),
             project_type=request.POST.get("project_type"),
             difficulty=request.POST.get("difficulty"),
             image=request.FILES.get("image"),
+            documentation_pdf=request.FILES.get("documentation_pdf"),
             author=request.user,
             approved=False
         )
@@ -153,8 +166,9 @@ def my_projects(request):
         'pending_edits': pending_edits,
     })
 
+
 # =========================
-# REGISTRÁCIA (S CAPTCHA)
+# REGISTRÁCIA
 # =========================
 def register(request):
     if request.method == 'POST':
@@ -166,15 +180,9 @@ def register(request):
     else:
         form = CustomUserCreationForm()
 
-    for field in form.fields.values():
-        field.widget.attrs.update({
-            'class': 'form-control'
-        })
-
     return render(request, 'projects/register.html', {
         'form': form
     })
-
 
 
 # =========================
@@ -200,7 +208,6 @@ def login_view(request):
     })
 
 
-
 # =========================
 # ODHLÁSENIE
 # =========================
@@ -208,26 +215,30 @@ def logout_view(request):
     logout(request)
     return redirect('index')
 
-from django.contrib.admin.views.decorators import staff_member_required
 
+# =========================
+# ADMIN – SCHVÁLENIE EDITU
+# =========================
 @staff_member_required
 def approve_project_edit(request, edit_id):
     edit = get_object_or_404(ProjectEdit, id=edit_id, approved=False)
     project = edit.original_project
 
     if request.method == "POST":
-        # prepíš pôvodný projekt
         project.title = edit.title
         project.functionality = edit.functionality
+        project.school_class = edit.school_class
         project.project_type = edit.project_type
         project.difficulty = edit.difficulty
 
         if edit.image:
             project.image = edit.image
 
+        if edit.documentation_pdf:
+            project.documentation_pdf = edit.documentation_pdf
+
         project.save()
 
-        # označ editáciu ako schválenú
         edit.approved = True
         edit.save()
 
@@ -238,9 +249,10 @@ def approve_project_edit(request, edit_id):
         "project": project,
     })
 
+
 @staff_member_required
 def admin_project_edits(request):
     edits = ProjectEdit.objects.filter(approved=False).order_by("-created_at")
     return render(request, "projects/admin_project_edits.html", {
         "edits": edits
-    })
+})
