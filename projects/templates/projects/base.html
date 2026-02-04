@@ -54,6 +54,18 @@
             transition: background 0.4s ease, color 0.3s ease;
         }
 
+        body {
+            color: var(--text-main);
+        }
+
+        p, span, li {
+            color: var(--text-muted);
+        }
+
+        h1, h2, h3, h4, h5 {
+            color: var(--text-main);
+        }
+
 
         body.dark {
             --bg-main: #07461f;
@@ -61,7 +73,7 @@
             --bg-soft: #171717;
 
             --text-main: #e5e7eb;
-            --text-muted: #9ca3af;
+            --text-muted: #b6b7b8;
 
             --glow-color: rgba(34,197,94,0.08);
             --bg-grad-1: #000000;
@@ -190,7 +202,7 @@
         .nav-menu a {
             display: block;
             padding: 10px 0;
-            color: #e5e7eb;
+            color: #dedede;
             text-decoration: none;
             font-weight: 600;
             font-size: 15px;
@@ -257,7 +269,6 @@
         }
 
         p {
-            color: var(--text-muted);
             line-height: 1.7;
             max-width: 720px;
         }
@@ -305,6 +316,12 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             margin-bottom: 30px;
             transition: all 0.25s ease;
+        }
+
+        .card p,
+        .card span,
+        .card small {
+            color: var(--bg-main);
         }
 
         .card:hover {
@@ -431,7 +448,7 @@
         FOOTER
         ========================= */
         footer {
-            background-color: #e5e7eb;
+            background-color: var(--bg-card);
             color: #64748b;
             padding: 20px;
             text-align: center;
@@ -533,8 +550,8 @@ function togglePassword(inputId, btn) {
 
 <header>
     <div class="header-inner">
-        <h2>4tak</h2>
         <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+        <h2>4tak</h2>
         <div class="hamburger" onclick="toggleMenu()">☰</div>
     </div>
 
