@@ -1,0 +1,57 @@
+{% extends "projects/base.html" %}
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card shadow-lg border-0 p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Učiteľský dashboard</h2>
+        </div>
+
+        <hr class="mb-4">
+
+        <div class="row g-4">
+
+            {% for project in pending_projects %}
+            <div class="col-md-6 col-lg-4">
+
+                <div class="border rounded-4 p-3 h-100 d-flex flex-column">
+
+                    <h5 class="fw-bold mb-3">
+                        {{ project.title }}
+                    </h5>
+
+                    <div class="text-muted mb-2">
+                        <strong>Autor:</strong> {{ project.author.username }}
+                    </div>
+
+                    <div class="text-muted mb-3">
+                        <strong>Trieda:</strong> {{ project.school_class }}
+                    </div>
+
+                    <div class="mt-auto">
+                        <a href="{% url 'project_detail' project.pk %}"
+                           class="btn btn-success w-100">
+                            Zobraziť projekt
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-success mb-0">
+                        Žiadne projekty na schválenie.
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

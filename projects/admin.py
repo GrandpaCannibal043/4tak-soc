@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Project, ProjectEdit, Rating
+from .models import Profile, RegistrationCode
 
 
 # =========================
@@ -68,3 +69,6 @@ class RatingAdmin(AdminStyleMixin):
     list_display = ('project', 'user', 'value', 'created_at')
     list_filter = ('value',)
     search_fields = ('project__title', 'user__username')
+
+    admin.site.register(Profile)
+    admin.site.register(RegistrationCode)

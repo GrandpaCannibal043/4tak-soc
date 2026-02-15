@@ -1,0 +1,35 @@
+{% extends "projects/base.html" %}
+
+{% block content %}
+<div class="card p-4">
+
+    <h2>Generovanie registračných kódov</h2>
+
+    {% if generated_code %}
+        <div class="alert alert-success text-center fs-4">
+            Vygenerovaný kód: <strong>{{ generated_code }}</strong>
+        </div>
+    {% endif %}
+
+    {% if user.profile.role == 'admin' or user.profile.role == 'teacher' %}
+        <form method="post" class="mb-3">
+            {% csrf_token %}
+            <input type="hidden" name="code_type" value="student">
+            <button type="submit" class="btn btn-primary w-100">
+                Vygenerovať žiacky kód (6 číslic)
+            </button>
+        </form>
+    {% endif %}
+
+    {% if user.profile.role == 'admin' %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="code_type" value="teacher">
+            <button type="submit" class="btn btn-success w-100">
+                Vygenerovať učiteľský kód (8 číslic)
+            </button>
+        </form>
+    {% endif %}
+
+</div>
+{% endblock %}

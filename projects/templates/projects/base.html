@@ -8,6 +8,7 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+
     <style>
         /* =========================
    FAREBNÁ PALETA
@@ -19,16 +20,16 @@
 
             --header-bg: #0c0c0c; /* VŽDY tmavý header */
 
-            --text-main: #010905;
-            --text-muted: #475569;
+            --text-main: #111827;      /* tmavá, čitateľná */
+            --text-muted: #4b5563;
 
             --green: #22c55e;
             --green-dark: #15803d;
 
             /* 👇 GLOW farby */
-            --glow-color: rgba(34,197,94,0.12);
-            --bg-grad-1: #f8fafc;
-            --bg-grad-2: #f1f5f9;
+            --glow-color: rgba(0, 158, 50, 0.299);   /* bolo 0.12 */
+            --bg-grad-1: #ffffff;
+            --bg-grad-2: #ffffff;
         }
 
         body {
@@ -72,12 +73,14 @@
             --bg-card: #0c0c0c;
             --bg-soft: #171717;
 
-            --text-main: #e5e7eb;
-            --text-muted: #b6b7b8;
+            --text-main: #ffffff;
+            --text-muted: #d1d5db;   /* ✅ svetlá sivá */
 
             --glow-color: rgba(34,197,94,0.08);
             --bg-grad-1: #000000;
             --bg-grad-2: #101010;
+            --bs-body-color: #e5e7eb;
+            --bs-secondary-color: #d1d5db;
         }
 
         body::before {
@@ -113,20 +116,21 @@
             z-index: 1000;
         }
 
-        header h2 {
+        .header-inner h2 {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
             color: white;
             font-weight: 800;
-            letter-spacing: 1px;
-            margin: 0;
         }
 
-        .header-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1100px;
+                .header-inner {
+            position: relative;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px; /* 👈 kľúčové */
+            height: 40px;
         }
 
 
@@ -175,6 +179,12 @@
             color: white;
             cursor: pointer;
             user-select: none;
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            cursor: pointer;
         }
 
         /* malé menu */
@@ -270,7 +280,6 @@
 
         p {
             line-height: 1.7;
-            max-width: 720px;
         }
 
         /* =========================
@@ -321,7 +330,7 @@
         .card p,
         .card span,
         .card small {
-            color: var(--bg-main);
+            color: var(--text-main);
         }
 
         .card:hover {
@@ -497,7 +506,52 @@
                     rgba(34, 197, 94, 0.12),
                     transparent 45%
         );
-}
+        }
+
+        body.dark label {
+            color: var(--text-main);
+        }
+
+        body.dark .form-select {
+            background-color: #111111;
+            color: #ffffff;
+            border: 1px solid var(--green);
+            border-radius: 12px;
+        }
+
+        body.dark .form-select:focus {
+            box-shadow: 0 0 0 0.2rem rgba(34,197,94,0.25);
+            border-color: var(--green);
+        }
+
+        body.dark .form-select,
+        body.dark .form-control {
+            background-color: #111111;
+            color: #ffffff;
+            border: 1px solid var(--green);
+            border-radius: 12px;
+        }
+
+        .badge {
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 10px;
+        }
+
+        .badge-type {
+            background-color: var(--green);
+            color: white;
+        }
+
+        .badge-difficulty {
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+
+        body.dark .badge-difficulty {
+            background-color: #1f2937;
+            color: #e5e7eb;
+        }
 
         header,
         .container,
@@ -514,6 +568,7 @@
         }
 
         .card:hover,
+
         .feature:hover {
             box-shadow:
                 0 20px 60px rgba(0,0,0,0.12),
@@ -521,12 +576,26 @@
         }
 
         .theme-toggle {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
             font-size: 22px;
-            color: white;
             cursor: pointer;
-            user-select: none;
         }
 
+        body.dark .text-muted {
+            color: white !important;
+        }
+
+        .muted {
+            color: var(--text-muted);
+        }
+
+        .hodnotenie {
+            color: var(--text-main);
+            font-weight: 500;
+        }
 
         
     </style>
@@ -563,13 +632,32 @@ function togglePassword(inputId, btn) {
     <a href="{% url 'project_list' %}">Projekty</a>
 
     {% if user.is_authenticated %}
-        <a href="{% url 'add_project' %}">Pridať projekt</a>
-        <a href="{% url 'my_projects' %}">Moje projekty</a>
+        {% if user.profile.role == 'student' %}
+            <a href="{% url 'add_project' %}">Pridať projekt</a>
+            <a href="{% url 'my_projects' %}">Moje projekty</a>
+        {% endif %}
+
+
+        {% if user.is_authenticated and user.profile.role != 'student' %}
+            <a href="{% url 'teacher_dashboard' %}">
+                Dashboard
+            </a>
+        {% endif %}
+
+        {% if user.is_authenticated and user.profile.role != 'student' %}
+        <a href="{% url 'generate_code_page' %}">
+            Generovať kód
+        </a>
+        {% endif %}
+
         <a href="{% url 'logout' %}">Odhlásiť</a>
     {% else %}
         <a href="{% url 'login' %}">Prihlásenie</a>
         <a href="{% url 'register' %}">Registrácia</a>
     {% endif %}
+
+
+
 </div>
 
 

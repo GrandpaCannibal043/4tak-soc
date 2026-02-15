@@ -5,9 +5,13 @@ from django.contrib.auth import login, logout
 from django.core.paginator import Paginator
 from django.db.models import Avg
 from django.contrib.admin.views.decorators import staff_member_required
-
 from .models import Project, Rating, ProjectEdit
 from .forms import ProjectForm, CustomUserCreationForm
+from .utils import generate_unique_code
+from .models import RegistrationCode
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+
 
 
 # =========================
@@ -66,9 +70,20 @@ def project_list(request):
 # =========================
 @login_required
 def project_detail(request, pk):
-    project = get_object_or_404(Project, pk=pk, approved=True)
 
-    if request.method == "POST":
+    project = get_object_or_404(Project, pk=pk)
+
+    # 🔒 OCHRANA NESCHVÁLENÝCH PROJEKTOV
+    if not project.approved:
+        if (
+            request.user != project.author and
+            request.user != project.mentor and
+            request.user.profile.role != 'admin'
+        ):
+            return redirect('project_list')
+
+    # ⭐ Hodnotenie iba pre schválené projekty
+    if request.method == "POST" and project.approved:
         value = int(request.POST.get("rating"))
 
         Rating.objects.update_or_create(
@@ -78,18 +93,22 @@ def project_detail(request, pk):
         )
         return redirect('project_detail', pk=project.pk)
 
-    average_rating = project.ratings.aggregate(avg=Avg('value'))['avg']
+    average_rating = None
+    user_rating = None
 
-    user_rating = Rating.objects.filter(
-        project=project,
-        user=request.user
-    ).first()
+    if project.approved:
+        average_rating = project.ratings.aggregate(avg=Avg('value'))['avg']
+        user_rating = Rating.objects.filter(
+            project=project,
+            user=request.user
+        ).first()
 
     return render(request, 'projects/project_detail.html', {
         'project': project,
         'average_rating': average_rating,
         'user_rating': user_rating,
     })
+
 
 
 # =========================
@@ -99,18 +118,27 @@ def project_detail(request, pk):
 def add_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST, request.FILES)
+
         if form.is_valid():
-            project = form.save(commit=False)
-            project.author = request.user
-            project.approved = False
-            project.save()
-            return render(request, 'projects/project_pending.html')
+
+            # Ak je používateľ študent → mentor je povinný
+            if request.user.profile.role == 'student' and not form.cleaned_data.get('mentor'):
+                form.add_error('mentor', 'Musíš vybrať mentora.')
+            else:
+                project = form.save(commit=False)
+                project.author = request.user
+                project.approved = False
+                project.save()
+
+                return render(request, 'projects/project_pending.html')
+
     else:
         form = ProjectForm()
 
     return render(request, 'projects/add_project.html', {
         'form': form
     })
+
 
 
 # =========================
@@ -256,3 +284,99 @@ def admin_project_edits(request):
     return render(request, "projects/admin_project_edits.html", {
         "edits": edits
 })
+
+
+@login_required
+def generate_code_page(request):
+    from .utils import generate_unique_code
+    from .models import RegistrationCode, Profile
+
+    if not hasattr(request.user, 'profile'):
+        Profile.objects.create(user=request.user, role='admin')
+
+    if request.user.profile.role == 'student':
+        return redirect('project_list')
+
+    generated_code = None
+
+    if request.method == "POST":
+
+        # Žiacky kód
+        if request.POST.get("code_type") == "student":
+            if request.user.profile.role in ['admin', 'teacher']:
+                code = generate_unique_code(6)
+                RegistrationCode.objects.create(
+                    code=code,
+                    role='student',
+                    created_by=request.user
+                )
+                generated_code = code
+
+        # Učiteľský kód
+        if request.POST.get("code_type") == "teacher":
+            if request.user.profile.role == 'admin':
+                code = generate_unique_code(8)
+                RegistrationCode.objects.create(
+                    code=code,
+                    role='teacher',
+                    created_by=request.user
+                )
+                generated_code = code
+
+    return render(request, 'projects/generate_code_page.html', {
+        'generated_code': generated_code
+    })
+
+@login_required
+def teacher_dashboard(request):
+
+    if request.user.profile.role not in ['teacher', 'admin']:
+        return redirect('project_list')
+
+    if request.user.profile.role == 'teacher':
+        pending_projects = Project.objects.filter(
+            mentor=request.user,
+            approved=False
+        )
+    else:
+        pending_projects = Project.objects.filter(
+            approved=False
+        )
+
+    return render(request, 'projects/teacher_dashboard.html', {
+        'pending_projects': pending_projects,
+    })
+
+
+
+@login_required
+def approve_project(request, pk):
+    project = Project.objects.get(pk=pk)
+
+    # Teacher môže schváliť iba svoje mentorované projekty
+    if request.user.profile.role == 'teacher':
+        if project.mentor != request.user:
+            return redirect('project_list')
+
+    # Admin môže schváliť všetko
+    elif request.user.profile.role != 'admin':
+        return redirect('project_list')
+
+    project.approved = True
+    project.save()
+
+    return redirect('teacher_dashboard')
+
+@login_required
+def delete_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    if (
+        request.user.profile.role != 'admin' and
+        request.user != project.mentor
+    ):
+        return redirect('project_list')
+
+    project.delete()
+    return redirect('teacher_dashboard')
+

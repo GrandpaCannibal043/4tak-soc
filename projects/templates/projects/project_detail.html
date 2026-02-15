@@ -24,10 +24,10 @@
 
     <!-- BADGES -->
     <div class="mb-3">
-        <span class="badge bg-primary">
+        <span class="badge badge-type">
             {{ project.get_project_type_display }}
         </span>
-        <span class="badge bg-secondary">
+        <span class="badge badge-difficulty">
             Náročnosť {{ project.difficulty }}/5
         </span>
     </div>
@@ -101,7 +101,7 @@
             </button>
         </form>
     {% else %}
-        <p class="text-muted">
+        <p class="hodnotenie">
             Pre hodnotenie sa musíš prihlásiť.
         </p>
     {% endif %}
@@ -116,11 +116,39 @@
         </a>
     {% endif %}
 
+    {% if user.is_authenticated and not project.approved %}
+    {% if user.profile.role == 'admin' or user == project.mentor %}
+        <a href="{% url 'approve_project' project.pk %}"
+           class="btn btn-success w-100 mb-3">
+            Schváliť projekt
+        </a>
+    {% endif %}
+    {% endif %}
+
+    {% if user.is_authenticated and not project.approved %}
+    {% if user.profile.role == 'admin' or user == project.mentor %}
+
+        <a href="{% url 'delete_project' project.pk %}"
+           class="btn btn-danger w-100 mb-3">
+            Zamietnuť / Odstrániť projekt
+        </a>
+
+    {% endif %}
+{% endif %}
+
+
     <!-- SPÄŤ – JEDINÉ OUTLINE -->
+    {% if user.is_authenticated and user.profile.role != 'student' and not project.approved %}
+    <a href="{% url 'teacher_dashboard' %}"
+       class="btn btn-outline-secondary w-100">
+        Späť na dashboard
+    </a>
+{% else %}
     <a href="{% url 'project_list' %}"
        class="btn btn-outline-secondary w-100">
         Späť na projekty
     </a>
+{% endif %}
 
 </div>
 

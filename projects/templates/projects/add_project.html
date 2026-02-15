@@ -40,6 +40,22 @@
                 {{ form.school_class }}
             </div>
 
+            {% if user.profile.role == 'student' %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    Mentor (učiteľ)
+                </label>
+
+                {{ form.mentor }}
+
+                {% if form.mentor.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ form.mentor.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
             <!-- TYP + NÁROČNOSŤ -->
             <div class="row">
                 <div class="col-md-6 mb-3">

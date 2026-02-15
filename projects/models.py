@@ -10,11 +10,11 @@ class Project(models.Model):
     ]
 
     DIFFICULTY_CHOICES = [
-        ('Veľmi ľahká', 'Veľmi ľahká'),
-        ('Ľahká', 'Ľahká'),
-        ('Stredná', 'Stredná'),
-        ('Ťažká', 'Ťažká'),
-        ('Veľmi ťažká', 'Veľmi ťažká'),
+        (1, 'Veľmi ľahká'),
+        (2, 'Ľahká'),
+        (3, 'Stredná'),
+        (4, 'Ťažká'),
+        (5, 'Veľmi ťažká'),
     ]
 
     CLASS_CHOICES = [
@@ -34,6 +34,14 @@ class Project(models.Model):
         ('3AE', '3AE'),
     ]
 
+    mentor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='mentored_projects'
+    )
+
     title = models.CharField(max_length=200)
 
     # POPIS PROJEKTU – ponechaný
@@ -45,7 +53,7 @@ class Project(models.Model):
     )
 
     difficulty = models.IntegerField(
-        choices=DIFFICULTY_CHOICES
+    choices=DIFFICULTY_CHOICES
     )
 
     school_class = models.CharField(
@@ -70,8 +78,8 @@ class Project(models.Model):
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-
     approved = models.BooleanField(default=False)
+
 
     def __str__(self):
         return self.title
@@ -138,3 +146,39 @@ class ProjectEdit(models.Model):
 
     def __str__(self):
         return f"Edit návrh – {self.original_project.title}"
+
+class Profile(models.Model):
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('teacher', 'Teacher'),
+        ('student', 'Student'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    mentor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='students'
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role}"
+
+
+class RegistrationCode(models.Model):
+    ROLE_CHOICES = [
+        ('teacher', 'Teacher'),
+        ('student', 'Student'),
+    ]
+
+    code = models.CharField(max_length=12, unique=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    used = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.code} ({self.role})"

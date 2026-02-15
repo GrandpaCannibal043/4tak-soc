@@ -83,6 +83,26 @@
                 {% endif %}
             </div>
 
+
+
+          <!-- REGISTRAČNÝ KÓD -->
+        <div class="mb-4">
+            <label class="form-label fw-semibold">
+                Registračný kód
+            </label>
+
+            {{ form.registration_code }}
+
+            {% if form.registration_code.errors %}
+                <div class="text-danger small mt-1">
+                    {{ form.registration_code.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+
+
+
                     <!-- CAPTCHA -->
 <!-- CAPTCHA -->
 <div class="mb-4">
