@@ -27,6 +27,7 @@ class ProjectForm(forms.ModelForm):
             "mentor",
             "image",
             "documentation_pdf",
+            'video_url',
         ]
 
         widgets = {
@@ -54,6 +55,10 @@ class ProjectForm(forms.ModelForm):
             "documentation_pdf": forms.ClearableFileInput(attrs={
                 "class": "form-control",
                 "accept": ".pdf"
+            }),
+            'video_url': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': ''
             }),
         }
 

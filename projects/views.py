@@ -28,8 +28,9 @@ def index(request):
 # ZOZNAM PROJEKTOV
 # =========================
 def project_list(request):
-    projects = Project.objects.filter(approved=True)
-
+    projects = Project.objects.filter(approved=True)\
+    .select_related("author", "mentor")
+    
     project_type = request.GET.get('type')
     difficulty = request.GET.get('difficulty')
     author = request.GET.get('author')

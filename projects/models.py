@@ -1,5 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+
+slug = models.SlugField(unique=True, blank=True)
+
+def save(self, *args, **kwargs):
+    if not self.slug:
+        self.slug = slugify(self.title)
+    super().save(*args, **kwargs)
+
+
+class Meta:
+    indexes = [
+        models.Index(fields=['approved']),
+        models.Index(fields=['created_at']),
+        models.Index(fields=['project_type']),
+        models.Index(fields=['difficulty']),
+    ]
+
 
 
 class Project(models.Model):
@@ -75,6 +93,8 @@ class Project(models.Model):
         blank=True,
         null=True
     )
+
+    video_url = models.URLField(blank=True, null=True)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

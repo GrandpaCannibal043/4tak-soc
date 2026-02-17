@@ -597,6 +597,34 @@
             font-weight: 500;
         }
 
+        .logo-link {
+            text-decoration: none;
+            color: inherit;
+            font-weight: 1200;
+        }
+
+        .logo-link:hover {
+            color: #22c55e; /* alebo tvoj accent */
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+        }
+
+
+
+        
+
+
         
     </style>
 </head>
@@ -620,7 +648,9 @@ function togglePassword(inputId, btn) {
 <header>
     <div class="header-inner">
         <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
-        <h2>4tak</h2>
+        <h2>
+            <a href="{% url 'index' %}" class="logo-link">4tak</a>
+        </h2>
         <div class="hamburger" onclick="toggleMenu()">☰</div>
     </div>
 

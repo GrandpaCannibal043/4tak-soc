@@ -89,6 +89,27 @@
                 {{ form.documentation_pdf }}
             </div>
 
+
+                        <!-- VIDEO (YouTube link) -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    Video prezentácia (YouTube link, nepovinné)
+                </label>
+
+                {{ form.video_url }}
+
+                {% if form.video_url.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ form.video_url.errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-text">
+                    Príklad: https://www.youtube.com/watch?v=abc123
+                </div>
+            </div>
+
+
             <!-- BUTTONS -->
             <div class="d-flex justify-content-between">
                 <a href="{% url 'project_list' %}"

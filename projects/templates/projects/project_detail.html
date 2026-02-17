@@ -4,6 +4,9 @@
 
 {% block content %}
 
+{% load video_filters %}
+
+
 <div class="card p-4">
 
     <!-- 🖼️ OBRÁZOK PROJEKTU -->
@@ -63,6 +66,19 @@
     {% endif %}
 
     <hr>
+
+    {% if project.video_url %}
+        <div class="video-wrapper mt-4">
+            <iframe 
+                src="{{ project.video_url|youtube_embed }}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        {% endif %}
+
+
 
     <!-- PRIEMERNÉ HODNOTENIE -->
     <p>
