@@ -8,5 +8,4 @@ psycopg2-binary==2.9.11
 sqlparse==0.5.3
 tzdata==2024.2
 whitenoise==6.11.0
-dj-database-url
-psycopg2-binary
+gunicorn==21.2.0
