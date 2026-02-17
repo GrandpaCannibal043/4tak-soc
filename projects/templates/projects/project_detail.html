@@ -68,7 +68,7 @@
     {% if project.documentation_pdf %}
         <a href="{{ project.documentation_pdf.url }}"
            target="_blank"
-           class="btn btn-primary w-100 mb-3">
+           class="btn btn-outline-secondary w-100">
             SOČ dokumentácia
         </a>
     {% endif %}
@@ -165,7 +165,7 @@
 
 {% if user.profile.role == "teacher" or user.profile.role == "admin" %}
     <a href="{% url 'project_history' project.pk %}"
-       class="btn btn-outline-secondary w-100 mb-3">
+       class="btn btn-success w-100 mb-3">
         História zmien
     </a>
 {% endif %}
@@ -174,12 +174,12 @@
     <!-- SPÄŤ – JEDINÉ OUTLINE -->
     {% if user.is_authenticated and user.profile.role != 'student' and not project.approved %}
     <a href="{% url 'teacher_dashboard' %}"
-       class="btn btn-outline-secondary w-100">
+       class="btn btn-success w-100 mb-3">
         Späť na dashboard
     </a>
 {% else %}
     <a href="{% url 'project_list' %}"
-       class="btn btn-outline-secondary w-100">
+       class="btn btn-success w-100 mb-3">
         Späť na projekty
     </a>
 {% endif %}
