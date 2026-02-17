@@ -5,7 +5,7 @@ from django.contrib.auth import login, logout
 from django.core.paginator import Paginator
 from django.db.models import Avg
 from django.contrib.admin.views.decorators import staff_member_required
-from .models import Project, Rating, ProjectEdit
+from .models import Project, Rating, ProjectEdit, ProjectHistory
 from .forms import ProjectForm, CustomUserCreationForm
 from .utils import generate_unique_code
 from .models import RegistrationCode
@@ -27,14 +27,16 @@ def index(request):
 # =========================
 # ZOZNAM PROJEKTOV
 # =========================
+from django.contrib.auth.models import User
+
 def project_list(request):
-    projects = Project.objects.filter(approved=True)\
-    .select_related("author", "mentor")
-    
+    projects = Project.objects.filter(approved=True)
+
     project_type = request.GET.get('type')
     difficulty = request.GET.get('difficulty')
     author = request.GET.get('author')
     school_class = request.GET.get('school_class')
+    mentor = request.GET.get('mentor')   # ← PRIDAJ TOTO
 
     if project_type:
         projects = projects.filter(project_type=project_type)
@@ -47,6 +49,9 @@ def project_list(request):
 
     if school_class:
         projects = projects.filter(school_class=school_class)
+
+    if mentor:   # ← PRIDAJ TOTO
+        projects = projects.filter(mentor__username__icontains=mentor)
 
     projects = projects.order_by('-created_at')
 
@@ -61,8 +66,11 @@ def project_list(request):
         'selected_difficulty': difficulty,
         'selected_author': author,
         'selected_class': school_class,
+        'selected_mentor': mentor,   # ← PRIDAJ TOTO
         'class_choices': Project.CLASS_CHOICES,
+        'teachers': User.objects.filter(profile__role='teacher'),  # ← A TOTO
     })
+
 
 
 
@@ -150,19 +158,34 @@ def project_edit(request, pk):
     project = get_object_or_404(Project, pk=pk, author=request.user)
 
     if request.method == "POST":
-        ProjectEdit.objects.create(
-            original_project=project,
-            title=request.POST.get("title"),
-            functionality=request.POST.get("functionality"),
-            school_class=request.POST.get("school_class"),
-            project_type=request.POST.get("project_type"),
-            difficulty=request.POST.get("difficulty"),
-            image=request.FILES.get("image"),
-            documentation_pdf=request.FILES.get("documentation_pdf"),
-            author=request.user,
-            approved=False
+
+        # uložiť históriu pred zmenou
+        ProjectHistory.objects.create(
+            project=project,
+            edited_by=request.user,
+            old_title=project.title,
+            old_functionality=project.functionality,
+            old_school_class=project.school_class,
+            old_project_type=project.project_type,
+            old_difficulty=project.difficulty,
         )
-        return render(request, "projects/project_pending.html")
+
+        # teraz prepíš projekt
+        project.title = request.POST.get("title")
+        project.functionality = request.POST.get("functionality")
+        project.school_class = request.POST.get("school_class")
+        project.project_type = request.POST.get("project_type")
+        project.difficulty = request.POST.get("difficulty")
+
+        if request.FILES.get("image"):
+            project.image = request.FILES.get("image")
+
+        if request.FILES.get("documentation_pdf"):
+            project.documentation_pdf = request.FILES.get("documentation_pdf")
+
+        project.save()
+
+        return redirect("project_detail", pk=project.pk)
 
     return render(request, "projects/project_edit.html", {
         "project": project
@@ -248,12 +271,23 @@ def logout_view(request):
 # =========================
 # ADMIN – SCHVÁLENIE EDITU
 # =========================
-@staff_member_required
+@login_required
 def approve_project_edit(request, edit_id):
+
     edit = get_object_or_404(ProjectEdit, id=edit_id, approved=False)
     project = edit.original_project
 
+    # Povoliť teacherovi iba ak je mentor
+    if request.user.profile.role == "teacher":
+        if project.mentor != request.user:
+            return redirect("teacher_dashboard")
+
+    # Admin môže všetko
+    elif request.user.profile.role != "admin":
+        return redirect("project_list")
+
     if request.method == "POST":
+
         project.title = edit.title
         project.functionality = edit.functionality
         project.school_class = edit.school_class
@@ -271,12 +305,14 @@ def approve_project_edit(request, edit_id):
         edit.approved = True
         edit.save()
 
-        return redirect("admin_project_edits")
+        return redirect("teacher_dashboard")
 
-    return render(request, "projects/admin_approve_edit.html", {
+    return render(request, "projects/approve_edit.html", {
         "edit": edit,
         "project": project,
     })
+
+
 
 
 @staff_member_required
@@ -335,18 +371,43 @@ def teacher_dashboard(request):
         return redirect('project_list')
 
     if request.user.profile.role == 'teacher':
+
         pending_projects = Project.objects.filter(
             mentor=request.user,
             approved=False
         )
-    else:
+
+        approved_projects = Project.objects.filter(
+            mentor=request.user,
+            approved=True
+        )
+
+        pending_edits = ProjectEdit.objects.filter(
+            original_project__mentor=request.user,
+            approved=False
+        )
+
+    else:  # admin
+
         pending_projects = Project.objects.filter(
+            approved=False
+        )
+
+        approved_projects = Project.objects.filter(
+            approved=True
+        )
+
+        pending_edits = ProjectEdit.objects.filter(
             approved=False
         )
 
     return render(request, 'projects/teacher_dashboard.html', {
         'pending_projects': pending_projects,
+        'approved_projects': approved_projects,
+        'pending_edits': pending_edits,
     })
+
+
 
 
 
@@ -381,3 +442,17 @@ def delete_project(request, pk):
     project.delete()
     return redirect('teacher_dashboard')
 
+@login_required
+def project_history(request, pk):
+
+    project = get_object_or_404(Project, pk=pk)
+
+    if request.user.profile.role not in ["teacher", "admin"]:
+        return redirect("project_list")
+
+    history = project.history.order_by("-edited_at")
+
+    return render(request, "projects/project_history.html", {
+        "project": project,
+        "history": history,
+    })

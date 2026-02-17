@@ -9,33 +9,24 @@
 <form method="get" class="card card-body mb-4">
     <div class="row g-3 align-items-end">
 
-        <!-- TYP -->
+        <!-- MENTOR -->
         <div class="col-md-3">
-            <label class="form-label">Typ projektu</label>
-            <select name="type" class="form-select">
-                <option value="">Všetky</option>
-                <option value="web" {% if selected_type == "web" %}selected{% endif %}>
-                    Webová aplikácia
-                </option>
-                <option value="physical" {% if selected_type == "physical" %}selected{% endif %}>
-                    Fyzická práca
-                </option>
-            </select>
+            <label class="form-label">Zodpovedný učiteľ</label>
+
+            <input type="text"
+                name="mentor"
+                list="mentor-list"
+                value="{{ selected_mentor|default:'' }}"
+                class="form-control"
+                placeholder="Meno učiteľa">
+
+            <datalist id="mentor-list">
+                {% for teacher in teachers %}
+                    <option value="{{ teacher.username }}">
+                {% endfor %}
+            </datalist>
         </div>
 
-        <!-- NÁROČNOSŤ -->
-        <div class="col-md-2">
-            <label class="form-label">Náročnosť</label>
-            <select name="difficulty" class="form-select">
-                <option value="">Všetky</option>
-                {% for i in "12345" %}
-                    <option value="{{ i }}"
-                        {% if selected_difficulty == i %}selected{% endif %}>
-                        {{ i }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
 
         <!-- AUTOR -->
         <div class="col-md-3">

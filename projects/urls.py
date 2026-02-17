@@ -24,13 +24,23 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('my-projects/', my_projects, name='my_projects'),
+    path(
+    "teacher/approve-edit/<int:edit_id>/",
+    views.approve_project_edit,
+    name="approve_project_edit"),
     path('admin/project-edits/', admin_project_edits, name='admin_project_edits'),    
-    path('admin/project-edits/<int:edit_id>/approve/', approve_project_edit, name='approve_project_edit'),
+    path(
+    'admin/project-edits/<int:edit_id>/approve/',
+    approve_project_edit,
+    name='admin_approve_project_edit'),
     path('generate-code/', views.generate_code_page, name='generate_code_page'),
     path('teacher-dashboard/', views.teacher_dashboard, name='teacher_dashboard'),
     path('approve/<int:pk>/', views.approve_project, name='approve_project'),
     path('delete/<int:pk>/', views.delete_project, name='delete_project'),
-
+    path("projects/<int:pk>/history/",
+    views.project_history,
+    name="project_history"
+),
 
 ]
 

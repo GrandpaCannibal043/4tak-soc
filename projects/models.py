@@ -202,3 +202,28 @@ class RegistrationCode(models.Model):
 
     def __str__(self):
         return f"{self.code} ({self.role})"
+    
+class ProjectHistory(models.Model):
+
+        project = models.ForeignKey(
+            Project,
+            on_delete=models.CASCADE,
+            related_name="history"
+        )
+
+        edited_by = models.ForeignKey(
+            User,
+            on_delete=models.CASCADE
+        )
+
+        edited_at = models.DateTimeField(auto_now_add=True)
+
+        old_title = models.CharField(max_length=200)
+        old_functionality = models.TextField()
+        old_school_class = models.CharField(max_length=3, blank=True, null=True)
+        old_project_type = models.CharField(max_length=10)
+        old_difficulty = models.IntegerField()
+
+        def __str__(self):
+            return f"{self.project.title} - {self.edited_at}"
+

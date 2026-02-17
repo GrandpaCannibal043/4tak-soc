@@ -40,6 +40,14 @@
         <strong>Autor:</strong> {{ project.author.username }}
     </p>
 
+    <!-- MENTOR -->    
+        {% if project.mentor %}
+    <p class="text-muted mb-1">
+        <strong>Učiteľ zodpovedný za prácu:</strong> {{ project.mentor.username }}
+    </p>
+    {% endif %}
+
+
     <!-- TRIEDA -->
     {% if project.school_class %}
         <p class="text-muted mb-1">
@@ -153,6 +161,13 @@
         </a>
 
     {% endif %}
+{% endif %}
+
+{% if user.profile.role == "teacher" or user.profile.role == "admin" %}
+    <a href="{% url 'project_history' project.pk %}"
+       class="btn btn-outline-secondary w-100 mb-3">
+        História zmien
+    </a>
 {% endif %}
 
 

@@ -1,0 +1,35 @@
+{% extends "projects/base.html" %}
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card p-4">
+
+        <h3 class="mb-4">História zmien – {{ project.title }}</h3>
+
+        {% for item in history %}
+            <div class="border rounded-3 p-3 mb-3">
+
+                <div class="small text-muted mb-2">
+                    Upravil: {{ item.edited_by.username }} |
+                    {{ item.edited_at }}
+                </div>
+
+                <strong>Pôvodný názov:</strong> {{ item.old_title }} <br>
+                <strong>Pôvodná náročnosť:</strong> {{ item.old_difficulty }} <br>
+
+                <hr>
+
+                <strong>Pôvodný popis:</strong>
+                <p>{{ item.old_functionality }}</p>
+
+            </div>
+        {% empty %}
+            <p>Žiadne zmeny zatiaľ neexistujú.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
