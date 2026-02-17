@@ -14,4 +14,4 @@ def youtube_embed(url):
 
     video_id = match.group(1)
 
-    return f"https://www.youtube-nocookie.com/embed/{video_id}"
+    return f"https://www.youtube.com/embed/{video_id}"
