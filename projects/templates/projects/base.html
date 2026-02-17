@@ -33,6 +33,7 @@
         }
 
         body {
+            height: 100%;
             margin: 0;
             font-family: "Inter", Arial, Helvetica, sans-serif;
             color: var(--text-main);
@@ -57,6 +58,12 @@
 
         body {
             color: var(--text-main);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         p, span, li {
@@ -110,7 +117,7 @@
         header {
             background-color: var(--header-bg);
             border-bottom: 3px solid var(--green);
-            padding: 25px 0;
+            padding: 40px 0;
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -118,6 +125,9 @@
 
         .header-inner h2 {
             position: absolute;
+            margin: 0;
+            color: white;
+            font-weight: 800;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
@@ -127,11 +137,12 @@
         }
 
                 .header-inner {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;   /* odsadenie od okrajov stránky */
         }
+
 
 
         /* =========================
@@ -462,7 +473,6 @@
             padding: 20px;
             text-align: center;
             font-size: 14px;
-            margin-top: 80px;
         }
 
         /* =========================

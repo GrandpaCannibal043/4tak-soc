@@ -11,6 +11,7 @@ from .utils import generate_unique_code
 from .models import RegistrationCode
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.http import HttpResponseForbidden
 
 
 
@@ -433,14 +434,20 @@ def approve_project(request, pk):
 def delete_project(request, pk):
     project = get_object_or_404(Project, pk=pk)
 
-    if (
-        request.user.profile.role != 'admin' and
-        request.user != project.mentor
-    ):
-        return redirect('project_list')
+    # Povolenie len pre mentora alebo admina
+    if request.user.profile.role not in ['teacher', 'admin']:
+        return HttpResponseForbidden()
 
-    project.delete()
-    return redirect('teacher_dashboard')
+    if request.user.profile.role == 'teacher' and project.mentor != request.user:
+        return HttpResponseForbidden()
+
+    if request.method == "POST":
+        project.delete()
+        return redirect('teacher_dashboard')
+
+    return render(request, "projects/confirm_delete.html", {
+        "project": project
+    })
 
 @login_required
 def project_history(request, pk):

@@ -1,0 +1,22 @@
+{% extends "projects/base.html" %}
+{% block content %}
+
+<div class="container py-4">
+    <div class="card p-4 shadow">
+        <h3 class="mb-3 text-danger">Naozaj chceš vymazať projekt?</h3>
+
+        <p><strong>{{ project.title }}</strong></p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                Áno, vymazať
+            </button>
+            <a href="{% url 'project_detail' project.pk %}" class="btn btn-secondary">
+                Zrušiť
+            </a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

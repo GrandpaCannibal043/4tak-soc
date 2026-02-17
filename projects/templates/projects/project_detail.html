@@ -170,7 +170,6 @@
     </a>
 {% endif %}
 
-
     <!-- SPÄŤ – JEDINÉ OUTLINE -->
     {% if user.is_authenticated and user.profile.role != 'student' and not project.approved %}
     <a href="{% url 'teacher_dashboard' %}"
@@ -183,6 +182,17 @@
         Späť na projekty
     </a>
 {% endif %}
+
+{% if user.is_authenticated and user.profile.role in "teacher,admin" %}
+        {% if user.profile.role == "admin" or project.mentor == user %}
+            <form method="post" action="{% url 'delete_project' project.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger w-100 mt-3">
+                    Vymazať projekt
+                </button>
+            </form>
+        {% endif %}
+    {% endif %}
 
 </div>
 
