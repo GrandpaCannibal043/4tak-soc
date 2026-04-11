@@ -49,23 +49,5 @@
 
 <hr>
 
-<h3>Čakajúce úpravy projektov</h3>
-
-{% if pending_edits %}
-    {% for edit in pending_edits %}
-        <div class="card p-3 mb-3 border-warning">
-            <h5>{{ edit.title }}</h5>
-            <p class="text-muted">
-                Úprava projektu: {{ edit.original_project.title }}
-            </p>
-
-            <span class="badge bg-warning text-dark">
-                čaká na schválenie
-            </span>
-        </div>
-    {% endfor %}
-{% else %}
-    <p class="text-muted">Žiadne čakajúce úpravy.</p>
-{% endif %}
 
 {% endblock %}

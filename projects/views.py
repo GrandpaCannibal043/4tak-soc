@@ -408,10 +408,6 @@ def teacher_dashboard(request):
         'pending_edits': pending_edits,
     })
 
-
-
-
-
 @login_required
 def approve_project(request, pk):
     project = Project.objects.get(pk=pk)

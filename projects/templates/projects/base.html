@@ -61,6 +61,7 @@
         }
 
         body {
+            min-height: 100vh; /* Zabezpečí, že body má aspoň výšku obrazovky */
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -256,10 +257,11 @@
         HLAVNÝ OBSAH
         ========================= */
         .container {
+            flex: 1; /* Toto vytlačí footer automaticky na spodok stránky */
             max-width: 1100px;
             margin: 80px auto;
             padding: 0 20px;
-            z-index: 0;
+            z-index: 1;
         }
 
         /* HERO – stred stránky */
