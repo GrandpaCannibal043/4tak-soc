@@ -21,13 +21,13 @@
             --header-bg: #0c0c0c; /* VŽDY tmavý header */
 
             --text-main: #111827;      /* tmavá, čitateľná */
-            --text-muted: #4b5563;
+            --text-muted: #3e4349;
 
             --green: #22c55e;
             --green-dark: #15803d;
 
             /* 👇 GLOW farby */
-            --glow-color: rgba(0, 158, 50, 0.299);   /* bolo 0.12 */
+            --glow-color: rgba(0, 209, 66, 0.317);   /* bolo 0.12 */
             --bg-grad-1: #ffffff;
             --bg-grad-2: #ffffff;
         }
@@ -43,13 +43,13 @@
                 radial-gradient(
                     circle at top,
                     var(--glow-color),
-                    transparent 45%
+                    transparent 30%
                 ),
                 radial-gradient(
                     ellipse at top,
                     var(--bg-grad-1) 0%,
-                    var(--bg-grad-2) 55%,
-                    var(--bg-main) 100%
+                    var(--bg-grad-2) 60%,
+                    var(--bg-main) 130%
                 );
 
             background-attachment: fixed;
@@ -299,31 +299,92 @@
         OSTROVČEKY (FEATURES)
         ========================= */
         .features {
-            max-width: 1000px;
-            margin: 0 auto;
+            max-width: 1100px;
+            margin: 80px auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 36px;
         }
 
         .feature {
-            background-color: var(--bg-card);
-            padding: 32px;
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            transition: all 0.25s ease;
-            text-align: left;
+            background: var(--bg-card);
+            padding: 36px;
+            border-radius: 20px;
+
+            /* jemný border pre oddelenie od pozadia */
+            border: 1px solid rgba(255,255,255,0.05);
+
+            /* realistický tieň */
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.10),
+                0 0 0 rgba(0,0,0,0);
+
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
+        /* 🔥 glow overlay – napojený na tvoje pozadie */
+        .feature::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                circle at top,
+                var(--glow-color),
+                transparent 60%
+            );
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+
+        /* hover efekt */
         .feature:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 18px 45px rgba(0,0,0,0.12);
+            transform: translateY(-10px);
+            box-shadow: 
+                0 25px 60px rgba(0,0,0,0.18);
         }
 
+        /* zosilnenie glow pri hover */
+        .feature:hover::before {
+            opacity: 1;
+        }
+
+        /* jemná outline aura (modern UI trik) */
+        .feature::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            box-shadow: 0 0 0 0px var(--glow-color);
+            transition: 0.3s;
+        }
+
+        .feature:hover::after {
+            box-shadow: 0 0 25px 4px var(--glow-color);
+        }
+
+        /* nadpis */
         .feature h3 {
-            margin-top: 0;
-            font-weight: 700;
-            margin-bottom: 10px;
+            margin: 0 0 12px 0;
+            font-weight: 800;
+            font-size: 1.45rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* text */
+        .feature p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* 👇 subtle highlight (stredná karta) */
+        .feature:nth-child(2) {
+            transform: scale(1.03);
         }
 
         /* =========================
@@ -378,12 +439,18 @@
         }
 
         /* ZELENÝ – PLNÝ */
+        /* lepšia čitateľnosť textu na zelených buttonoch */
         .btn-green,
         .btn-primary,
         .btn-success {
             background-color: var(--green);
             color: white;
             border-color: var(--green);
+
+            /* 👇 kľúčová časť */
+            text-shadow:
+                0 1px 2px rgba(0,0,0,0.6),
+                0 2px 6px rgba(0,0,0,0.3);
         }
 
         .btn-green:hover,
@@ -391,6 +458,10 @@
         .btn-success:hover {
             background-color: var(--green-dark);
             border-color: var(--green-dark);
+
+            text-shadow:
+                0 2px 4px rgba(0,0,0,0.7),
+                0 4px 10px rgba(0,0,0,0.4);
         }
 
         /* ZELENÝ – OUTLINE */
@@ -575,8 +646,8 @@
         .card,
         .feature {
             box-shadow:
-                0 10px 30px rgba(0,0,0,0.08),
-                0 0 0 1px rgba(0,0,0,0.02);
+                0 30px 40px rgba(0,0,0,0.08),
+                0 0 0 3px rgba(0,0,0,0.02);
         }
 
         .card:hover,
@@ -632,11 +703,113 @@
             border-radius: 16px;
         }
 
+        .codes-table {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
 
+        /* jeden riadok */
+        .code-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 22px;
+            transition: 0.2s;
+        }
 
+        /* oddelenie riadkov */
+        .code-row:not(:last-child) {
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+
+        /* hover efekt */
+        .code-row:hover {
+            background: rgba(0,0,0,0.03);
+        }
+
+        /* ľavá časť */
+        .code-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* kód */
+        .code-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        /* pravá časť */
+        .code-right {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* badge štýly */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-student {
+            background: var(--green);
+            color: white;
+        }
+
+        .badge-teacher {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .badge-used {
+            background: #6b7280;
+            color: white;
+        }
+
+        body.dark .codes-table {
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        body.dark .code-row:not(:last-child) {
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        body.dark .code-row:hover {
+            background: rgba(255,255,255,0.04);
+        }
+
+        /* FILE INPUT – text v tlačidle */
+        input[type="file"]::file-selector-button {
+            background: #ffffff;
+            color: #000000; /* 👈 čierny text */
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        /* hover */
+        input[type="file"]::file-selector-button:hover {
+            background: #ffffff;
+        }
+
+        body.dark input[type="file"]::file-selector-button {
+            background: #e5e7eb; /* svetlé tlačidlo */
+            color: #000;         /* čitateľný text */
+        }
+
+        input[type="file"] {
+            color: var(--text-muted);
+        }
         
-
-
         
     </style>
 </head>

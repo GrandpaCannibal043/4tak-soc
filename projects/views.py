@@ -329,9 +329,11 @@ def generate_code_page(request):
     from .utils import generate_unique_code
     from .models import RegistrationCode, Profile
 
+    # ak user nemá profil → vytvor
     if not hasattr(request.user, 'profile'):
         Profile.objects.create(user=request.user, role='admin')
 
+    # študent nemá prístup
     if request.user.profile.role == 'student':
         return redirect('project_list')
 
@@ -361,9 +363,19 @@ def generate_code_page(request):
                 )
                 generated_code = code
 
+    # 🔥 NAČÍTANIE KÓDOV (toto ti chýbalo)
+    if request.user.profile.role == 'admin':
+        codes = RegistrationCode.objects.all().order_by('-created_at')
+    else:
+        codes = RegistrationCode.objects.filter(
+            created_by=request.user
+        ).order_by('-created_at')
+
     return render(request, 'projects/generate_code_page.html', {
-        'generated_code': generated_code
+        'generated_code': generated_code,
+        'codes': codes  # 👈 kľúčové
     })
+
 
 @login_required
 def teacher_dashboard(request):

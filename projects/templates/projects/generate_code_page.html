@@ -32,4 +32,37 @@
     {% endif %}
 
 </div>
+
+<h4 class="mt-4">Vygenerované kódy</h4>
+
+{% if codes %}
+<div class="codes-table">
+
+    {% for code in codes %}
+    <div class="code-row">
+        
+        <div class="code-left">
+            <span class="code-value">{{ code.code }}</span>
+
+            {% if code.role == "teacher" %}
+                <span class="badge badge-teacher">učiteľ</span>
+            {% else %}
+                <span class="badge badge-student">žiak</span>
+            {% endif %}
+
+            {% if code.used %}
+                <span class="badge badge-used">použitý</span>
+            {% endif %}
+        </div>
+
+        <div class="code-right">
+            {{ code.created_at|date:"d.m.Y H:i" }}
+        </div>
+
+    </div>
+    {% endfor %}
+
+</div>
+{% endif %}
+
 {% endblock %}
