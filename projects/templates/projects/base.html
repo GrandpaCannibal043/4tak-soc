@@ -299,9 +299,7 @@
             line-height: 1.7;
         }
 
-        /* =========================
-        OSTROVČEKY (FEATURES)
-        ========================= */
+        /* OSTROVČEKY */
         .features {
             max-width: 1100px;
             margin: 80px auto;
@@ -328,7 +326,7 @@
             transition: all 0.3s ease;
         }
 
-        /* 🔥 glow overlay – napojený na tvoje pozadie */
+        /* glow overlay – napojený na tvoje pozadie */
         .feature::before {
             content: "";
             position: absolute;
@@ -433,8 +431,8 @@
 
             padding: 16px 32px;
             border-radius: 999px;
-            font-weight: 600;
-            font-size: 17px;
+            font-weight: 800;
+            font-size: 14px;
             text-decoration: none;
             cursor: pointer;
 
@@ -575,6 +573,67 @@
             outline: none;
             border-color: #22c55e;
             box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
+        }
+
+
+        .filter-box {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .filter-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--bg-soft);
+            background: transparent;
+            color: var(--text-main);
+        }
+
+        /* focus */
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--green);
+        }
+
+        /* button */
+        .filter-action {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        body.dark .filter-box {
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        body.dark .filter-group input,
+        body.dark .filter-group select {
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         /* =========================

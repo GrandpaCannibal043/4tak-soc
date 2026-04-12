@@ -10,22 +10,54 @@
     <div class="row g-3 align-items-end">
 
         <!-- MENTOR -->
-        <div class="col-md-3">
-            <label class="form-label">Zodpovedný učiteľ</label>
+        <div class="filter-box">
 
-            <input type="text"
-                name="mentor"
-                list="mentor-list"
-                value="{{ selected_mentor|default:'' }}"
-                class="form-control"
-                placeholder="Meno učiteľa">
+            <form method="get" class="filter-form">
 
-            <datalist id="mentor-list">
-                {% for teacher in teachers %}
-                    <option value="{{ teacher.username }}">
-                {% endfor %}
-            </datalist>
+                <div class="filter-group">
+                    <label>Zodpovedný učiteľ</label>
+                    <input type="text"
+                        name="mentor"
+                        list="mentor-list"
+                        value="{{ selected_mentor|default:'' }}"
+                        placeholder="Meno učiteľa">
+                </div>
+
+                <div class="filter-group">
+                    <label>Autor</label>
+                    <input type="text"
+                        name="author"
+                        value="{{ selected_author|default:'' }}"
+                        placeholder="Meno autora">
+                </div>
+
+                <div class="filter-group">
+                    <label>Trieda</label>
+                    <select name="class">
+                        <option value="">Všetky</option>
+                        {% for c in classes %}
+                            <option value="{{ c }}" {% if selected_class == c %}selected{% endif %}>
+                                {{ c }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-action">
+                    <button type="submit" class="btn btn-primary">
+                        Filtrovať
+                    </button>
+                </div>
+
+            </form>
+
         </div>
+
+        <datalist id="mentor-list">
+            {% for teacher in teachers %}
+                <option value="{{ teacher.username }}">
+            {% endfor %}
+        </datalist>
 
 
         <!-- AUTOR -->
