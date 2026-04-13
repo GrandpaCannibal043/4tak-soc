@@ -7,76 +7,54 @@
 {% load video_filters %}
 
 
-<div class="card p-4">
+<div class="project-detail">
 
-    <!-- 🖼️ OBRÁZOK PROJEKTU -->
-    {% if project.image %}
-        <img src="{{ project.image.url }}"
-             alt="{{ project.title }}"
-             style="
-                width: 100%;
-                max-height: 360px;
-                object-fit: cover;
-                border-radius: 14px;
-                margin-bottom: 25px;
-             ">
-    {% endif %}
+    <!-- HERO SEKCIa -->
+    <div class="project-hero">
+        {% if project.image %}
+            <img src="{{ project.image.url }}" alt="{{ project.title }}" class="project-image">
+        {% endif %}
 
-    <!-- NÁZOV -->
-    <h1>{{ project.title }}</h1>
+        <div class="project-header">
+            <h1 class="project-title">{{ project.title }}</h1>
 
-    <!-- BADGES -->
-    <div class="mb-3">
-        <span class="badge badge-type">
-            {{ project.get_project_type_display }}
-        </span>
-        <span class="badge badge-difficulty">
-            Náročnosť {{ project.difficulty }}/5
-        </span>
+            <div class="project-badges">
+                <span class="badge badge-type">
+                    {{ project.get_project_type_display }}
+                </span>
+                <span class="badge badge-difficulty">
+                    Náročnosť {{ project.difficulty }}/5
+                </span>
+            </div>
+        </div>
     </div>
 
-    <!-- AUTOR -->
-    <p class="text-muted mb-1">
-        <strong>Autor:</strong> {{ project.author.username }}
-    </p>
+    <!-- META INFO -->
+    <div class="project-meta card">
+        <div class="meta-grid">
+            <div><strong>Autor:</strong> {{ project.author.username }}</div>
 
-    <!-- MENTOR -->    
-        {% if project.mentor %}
-    <p class="text-muted mb-1">
-        <strong>Učiteľ zodpovedný za prácu:</strong> {{ project.mentor.username }}
-    </p>
-    {% endif %}
+            {% if project.mentor %}
+            <div><strong>Mentor:</strong> {{ project.mentor.username }}</div>
+            {% endif %}
 
+            {% if project.school_class %}
+            <div><strong>Trieda:</strong> {{ project.school_class }}</div>
+            {% endif %}
+        </div>
+    </div>
 
-    <!-- TRIEDA -->
-    {% if project.school_class %}
-        <p class="text-muted mb-1">
-            <strong>Trieda:</strong> {{ project.school_class }}
-        </p>
-    {% endif %}
+    <!-- POPIS -->
+    <div class="project-section card">
+        <h3>Popis projektu</h3>
+        <p>{{ project.functionality }}</p>
+    </div>
 
-    <hr>
-
-    <!-- POPIS PROJEKTU -->
-    <p class="text-muted mb-1">
-        {{ project.functionality }}
-    </p>
-
-    <hr>
-
-    <!-- PDF DOKUMENTÁCIA -->
-    {% if project.documentation_pdf %}
-        <a href="{{ project.documentation_pdf.url }}"
-           target="_blank"
-           class="btn btn-outline-secondary w-100">
-            SOČ dokumentácia
-        </a>
-    {% endif %}
-
-    <hr>
-
+    <!-- VIDEO -->
     {% if project.video_url %}
-        <div class="video-wrapper mt-4">
+    <div class="project-section card">
+        <h3>Ukážka</h3>
+        <div class="video-wrapper">
             <iframe
                 src="{{ project.video_url|youtube_embed }}"
                 title="YouTube video player"
@@ -86,114 +64,104 @@
                 allowfullscreen>
             </iframe>
         </div>
-        {% endif %}
+    </div>
+    {% endif %}
 
+    <!-- DOKUMENTÁCIA -->
+    {% if project.documentation_pdf %}
+    <div class="project-section card text-center">
+        <a href="{{ project.documentation_pdf.url }}"
+           target="_blank"
+           class="btn btn-green-outline">
+            SOČ dokumentácia
+        </a>
+    </div>
+    {% endif %}
 
+    <!-- HODNOTENIE -->
+    <div class="project-section card">
+        <h3>Hodnotenie</h3>
 
+        <p>
+            <strong>Priemer:</strong>
+            {% if average_rating %}
+                {{ average_rating|floatformat:1 }}/5
+            {% else %}
+                zatiaľ nehodnotené
+            {% endif %}
+        </p>
 
-    <!-- PRIEMERNÉ HODNOTENIE -->
-    <p>
-        <strong>Priemerné hodnotenie:</strong>
-        {% if average_rating %}
-            {{ average_rating|floatformat:1 }}/5
-        {% else %}
-            zatiaľ nehodnotené
-        {% endif %}
-    </p>
-
-    <hr>
-
-    <!-- FORMULÁR NA HODNOTENIE -->
-    {% if user.is_authenticated %}
-        <form method="post" class="mb-3">
+        {% if user.is_authenticated %}
+        <form method="post" class="rating-form">
             {% csrf_token %}
 
-            <label for="rating"><strong>Tvoje hodnotenie:</strong></label>
-
-            <select name="rating"
-                    id="rating"
-                    class="form-select w-auto d-inline-block ms-2">
+            <select name="rating" class="form-select">
                 {% for i in "12345" %}
-                    <option value="{{ i }}"
-                        {% if user_rating and user_rating.value == i|add:"0" %}
-                            selected
-                        {% endif %}>
-                        {{ i }}
-                    </option>
+                <option value="{{ i }}"
+                    {% if user_rating and user_rating.value == i|add:"0" %}
+                        selected
+                    {% endif %}>
+                    {{ i }}
+                </option>
                 {% endfor %}
             </select>
 
-            <button type="submit" class="btn btn-primary ms-2">
+            <button type="submit" class="btn btn-primary">
                 Uložiť
             </button>
         </form>
-    {% else %}
-        <p class="hodnotenie">
-            Pre hodnotenie sa musíš prihlásiť.
-        </p>
-    {% endif %}
+        {% else %}
+            <p class="hodnotenie">
+                Pre hodnotenie sa musíš prihlásiť.
+            </p>
+        {% endif %}
+    </div>
 
-    <hr>
+    <!-- ACTIONS -->
+    <div class="project-actions">
 
-    <!-- UPRAVIŤ PROJEKT – LEN AUTOR -->
-    {% if user.is_authenticated and user == project.author %}
+        {% if user.is_authenticated and user == project.author %}
         <a href="{% url 'project_edit' project.pk %}"
-           class="btn btn-primary w-100 mb-3">
+           class="btn btn-primary btn-full">
             Upraviť projekt
         </a>
-    {% endif %}
+        {% endif %}
 
-    {% if user.is_authenticated and not project.approved %}
-    {% if user.profile.role == 'admin' or user == project.mentor %}
+        {% if user.is_authenticated and not project.approved %}
+        {% if user.profile.role == 'admin' or user == project.mentor %}
         <a href="{% url 'approve_project' project.pk %}"
-           class="btn btn-success w-100 mb-3">
+           class="btn btn-success btn-full">
             Schváliť projekt
         </a>
-    {% endif %}
-    {% endif %}
-
-    {% if user.is_authenticated and not project.approved %}
-    {% if user.profile.role == 'admin' or user == project.mentor %}
 
         <a href="{% url 'delete_project' project.pk %}"
-           class="btn btn-danger w-100 mb-3">
-            Zamietnuť / Odstrániť projekt
+           class="btn btn-danger btn-full">
+            Zamietnuť projekt
         </a>
-
-    {% endif %}
-{% endif %}
-
-{% if user.profile.role == "teacher" or user.profile.role == "admin" %}
-    <a href="{% url 'project_history' project.pk %}"
-       class="btn btn-success w-100 mb-3">
-        História zmien
-    </a>
-{% endif %}
-
-    <!-- SPÄŤ – JEDINÉ OUTLINE -->
-    {% if user.is_authenticated and user.profile.role != 'student' and not project.approved %}
-    <a href="{% url 'teacher_dashboard' %}"
-       class="btn btn-success w-100 mb-3">
-        Späť na dashboard
-    </a>
-{% else %}
-    <a href="{% url 'project_list' %}"
-       class="btn btn-success w-100 mb-3">
-        Späť na projekty
-    </a>
-{% endif %}
-
-{% if user.is_authenticated and user.profile.role in "teacher,admin" %}
-        {% if user.profile.role == "admin" or project.mentor == user %}
-            <form method="post" action="{% url 'delete_project' project.pk %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger w-100 mt-3">
-                    Vymazať projekt
-                </button>
-            </form>
         {% endif %}
-    {% endif %}
+        {% endif %}
 
+        {% if user.profile.role == "teacher" or user.profile.role == "admin" %}
+        <a href="{% url 'project_history' project.pk %}"
+           class="btn btn-success btn-full">
+            História zmien
+        </a>
+        {% endif %}
+
+        <!-- BACK -->
+        {% if user.is_authenticated and user.profile.role != 'student' and not project.approved %}
+        <a href="{% url 'teacher_dashboard' %}"
+           class="btn btn-green btn-full">
+            Späť na dashboard
+        </a>
+        {% else %}
+        <a href="{% url 'project_list' %}"
+           class="btn btn-green btn-full">
+            Späť na projekty
+        </a>
+        {% endif %}
+
+    </div>
 </div>
 
 {% endblock %}
