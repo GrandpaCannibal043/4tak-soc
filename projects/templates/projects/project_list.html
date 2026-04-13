@@ -6,93 +6,68 @@
 <h1 class="mb-4">Projekty SOČ</h1>
 
 <!-- FILTER -->
-<form method="get" class="card card-body mb-4">
-    <div class="row g-3 align-items-end">
+    <div class="filter-wrapper card card-body mb-4">
 
-        <!-- MENTOR -->
-        <div class="filter-box">
+    <!-- HEADER -->
+    <div class="filter-header" onclick="toggleFilter()">
+        <span>Filtrovanie</span>
+        <span id="filter-icon">▼</span>
+    </div>
 
-            <form method="get" class="filter-form">
+    <!-- CONTENT -->
+    <div id="filter-content" class="filter-content">
 
-                <div class="filter-group">
-                    <label>Zodpovedný učiteľ</label>
-                    <input type="text"
-                        name="mentor"
-                        list="mentor-list"
-                        value="{{ selected_mentor|default:'' }}"
-                        placeholder="Meno učiteľa">
-                </div>
+        <form method="get" class="filter-form">
 
-                <div class="filter-group">
-                    <label>Autor</label>
-                    <input type="text"
-                        name="author"
-                        value="{{ selected_author|default:'' }}"
-                        placeholder="Meno autora">
-                </div>
+            <div class="filter-group">
+                <label>Zodpovedný učiteľ</label>
+                <input type="text"
+                       name="mentor"
+                       list="mentor-list"
+                       value="{{ selected_mentor|default:'' }}"
+                       placeholder="Meno učiteľa">
+            </div>
 
-                <div class="filter-group">
-                    <label>Trieda</label>
-                    <select name="class">
-                        <option value="">Všetky</option>
-                        {% for c in classes %}
-                            <option value="{{ c }}" {% if selected_class == c %}selected{% endif %}>
-                                {{ c }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <div class="filter-group">
+                <label>Autor</label>
+                <input type="text"
+                       name="author"
+                       value="{{ selected_author|default:'' }}"
+                       placeholder="Meno autora">
+            </div>
 
-                <div class="filter-action">
-                    <button type="submit" class="btn btn-primary">
-                        Filtrovať
-                    </button>
-                </div>
+            <div class="filter-group">
+                <label>Trieda</label>
+                <select name="school_class">
+                    <option value="">Všetky</option>
 
-            </form>
+                    {% for value, label in class_choices %}
+                        <option value="{{ value }}"
+                            {% if selected_class == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        </div>
+            <div class="filter-action">
+                <button type="submit" class="btn btn-primary">
+                    Filtrovať
+                </button>
+            </div>
 
-        <datalist id="mentor-list">
-            {% for teacher in teachers %}
-                <option value="{{ teacher.username }}">
-            {% endfor %}
-        </datalist>
-
-
-        <!-- AUTOR -->
-        <div class="col-md-3">
-            <label class="form-label">Autor</label>
-            <input  type="text" name="author"
-                    value="{{ request.GET.author|default_if_none:'' }}"
-                    class="form-control"
-                    placeholder="Meno autora">
-        </div>
-
-        <!-- TRIEDA -->
-        <div class="col-md-2">
-            <label class="form-label">Trieda</label>
-            <select name="school_class" class="form-select">
-                <option value="">Všetky</option>
-                {% for value, label in class_choices %}
-                    <option value="{{ value }}"
-                        {% if selected_class == value %}selected{% endif %}>
-                        {{ label }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <!-- BUTTONS -->
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-success w-100 mb-2">
-                Filtrovať
-        </div>
+        </form>
 
     </div>
-</form>
 
-<!-- PROJECT CARDS -->
+</div>
+
+<datalist id="mentor-list">
+    {% for teacher in teachers %}
+        <option value="{{ teacher.username }}">
+    {% endfor %}
+</datalist>
+
 <div class="row">
 
 {% for project in projects %}
@@ -140,50 +115,56 @@
 </div>
 
 <!-- PAGINATION -->
-<nav aria-label="Stránkovanie">
-    <ul class="pagination justify-content-center">
+<nav class="pagination-wrapper">
 
-        {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link"
-                   href="?page={{ page_obj.previous_page_number }}
-                   {% if selected_type %}&type={{ selected_type }}{% endif %}
-                   {% if selected_difficulty %}&difficulty={{ selected_difficulty }}{% endif %}
-                   {% if selected_author %}&author={{ selected_author }}{% endif %}
-                   {% if selected_class %}&school_class={{ selected_class }}{% endif %}">
-                    Predchádzajúca
-                </a>
-            </li>
-        {% else %}
-            <li class="page-item disabled">
-                <span class="page-link">Predchádzajúca</span>
-            </li>
-        {% endif %}
+    {% if page_obj.has_previous %}
+        <a class="page-btn"
+           href="?page={{ page_obj.previous_page_number }}">
+            ← Predchádzajúca
+        </a>
+    {% else %}
+        <span class="page-btn disabled">←</span>
+    {% endif %}
 
-        <li class="page-item disabled">
-            <span class="page-link">
-                Strana {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
-            </span>
-        </li>
+    <div class="page-info">
+        Strana <strong>{{ page_obj.number }}</strong>
+        z {{ page_obj.paginator.num_pages }}
+    </div>
 
-        {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link"
-                   href="?page={{ page_obj.next_page_number }}
-                   {% if selected_type %}&type={{ selected_type }}{% endif %}
-                   {% if selected_difficulty %}&difficulty={{ selected_difficulty }}{% endif %}
-                   {% if selected_author %}&author={{ selected_author }}{% endif %}
-                   {% if selected_class %}&school_class={{ selected_class }}{% endif %}">
-                    Ďalšia
-                </a>
-            </li>
-        {% else %}
-            <li class="page-item disabled">
-                <span class="page-link">Ďalšia</span>
-            </li>
-        {% endif %}
+    {% if page_obj.has_next %}
+        <a class="page-btn"
+           href="?page={{ page_obj.next_page_number }}">
+            Ďalšia →
+        </a>
+    {% else %}
+        <span class="page-btn disabled">→</span>
+    {% endif %}
 
-    </ul>
 </nav>
+
+<script>
+function toggleFilter() {
+    const content = document.getElementById("filter-content");
+    const icon = document.getElementById("filter-icon");
+
+    content.classList.toggle("hidden");
+
+    const isHidden = content.classList.contains("hidden");
+    icon.textContent = isHidden ? "▶" : "▼";
+
+    localStorage.setItem("filterHidden", isHidden);
+}
+
+window.onload = () => {
+    const hidden = localStorage.getItem("filterHidden") === "true";
+    const content = document.getElementById("filter-content");
+    const icon = document.getElementById("filter-icon");
+
+    if (hidden) {
+        content.classList.add("hidden");
+        icon.textContent = "▶";
+    }
+};
+</script>
 
 {% endblock %}
