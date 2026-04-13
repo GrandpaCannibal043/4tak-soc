@@ -1204,10 +1204,20 @@ function togglePassword(inputId, btn) {
         {% endif %}
 
 
-        {% if user.is_authenticated and user.profile.role != 'student' %}
-            <a href="{% url 'teacher_dashboard' %}">
-                Dashboard
-            </a>
+        {% if user.is_authenticated %}
+
+            {% if user.profile.role == 'admin' %}
+                <a href="/admin/">
+                    Admin panel
+                </a>
+
+            {% elif user.profile.role == 'teacher' %}
+                <a href="{% url 'teacher_dashboard' %}">
+                    Dashboard
+                </a>
+
+            {% endif %}
+
         {% endif %}
 
         {% if user.is_authenticated and user.profile.role != 'student' %}
