@@ -442,16 +442,22 @@ def approve_project(request, pk):
 def delete_project(request, pk):
     project = get_object_or_404(Project, pk=pk)
 
-    # Povolenie len pre mentora alebo admina
-    if request.user.profile.role not in ['teacher', 'admin']:
-        return HttpResponseForbidden()
-
-    if request.user.profile.role == 'teacher' and project.mentor != request.user:
+    # Povolenie: admin OR mentor OR author
+    if not (
+        request.user.profile.role == 'admin'
+        or request.user == project.mentor
+        or request.user == project.author
+    ):
         return HttpResponseForbidden()
 
     if request.method == "POST":
         project.delete()
-        return redirect('teacher_dashboard')
+
+        # redirect podľa roly (lepší UX)
+        if request.user.profile.role in ['teacher', 'admin']:
+            return redirect('teacher_dashboard')
+        else:
+            return redirect('project_list')
 
     return render(request, "projects/confirm_delete.html", {
         "project": project

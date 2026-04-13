@@ -118,50 +118,67 @@
     </div>
 
     <!-- ACTIONS -->
-    <div class="project-actions">
+<div class="project-actions">
+
+    <!-- 🔴 REŽIM: SCHVAĽOVANIE -->
+    {% if user.is_authenticated and not project.approved %}
+        {% if user.profile.role == "admin" or user == project.mentor %}
+
+            <a href="{% url 'approve_project' project.pk %}"
+               class="btn btn-success btn-full">
+                Schváliť projekt
+            </a>
+
+            <a href="{% url 'delete_project' project.pk %}"
+               class="btn btn-danger btn-full">
+                Zamietnuť projekt
+            </a>
+
+            <a href="{% url 'teacher_dashboard' %}"
+               class="btn btn-green btn-full">
+                Späť na dashboard
+            </a>
+
+        {% endif %}
+    {% endif %}
+
+
+    <!-- 🟢 REŽIM: BEŽNÝ DETAIL -->
+    {% if project.approved %}
 
         {% if user.is_authenticated and user == project.author %}
-        <a href="{% url 'project_edit' project.pk %}"
-           class="btn btn-primary btn-full">
-            Upraviť projekt
-        </a>
+            <a href="{% url 'project_edit' project.pk %}"
+               class="btn btn-primary btn-full">
+                Upraviť projekt
+            </a>
         {% endif %}
 
-        {% if user.is_authenticated and not project.approved %}
-        {% if user.profile.role == 'admin' or user == project.mentor %}
-        <a href="{% url 'approve_project' project.pk %}"
-           class="btn btn-success btn-full">
-            Schváliť projekt
-        </a>
-
-        <a href="{% url 'delete_project' project.pk %}"
-           class="btn btn-danger btn-full">
-            Zamietnuť projekt
-        </a>
-        {% endif %}
+        {% if user.is_authenticated %}
+            {% if user.profile.role == "admin" or user == project.mentor or user == project.author %}
+                <form method="post" action="{% url 'delete_project' project.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-full">
+                        Vymazať projekt
+                    </button>
+                </form>
+            {% endif %}
         {% endif %}
 
         {% if user.profile.role == "teacher" or user.profile.role == "admin" %}
-        <a href="{% url 'project_history' project.pk %}"
-           class="btn btn-success btn-full">
-            História zmien
-        </a>
+            <a href="{% url 'project_history' project.pk %}"
+               class="btn btn-success btn-full">
+                História zmien
+            </a>
         {% endif %}
 
-        <!-- BACK -->
-        {% if user.is_authenticated and user.profile.role != 'student' and not project.approved %}
-        <a href="{% url 'teacher_dashboard' %}"
-           class="btn btn-green btn-full">
-            Späť na dashboard
-        </a>
-        {% else %}
         <a href="{% url 'project_list' %}"
            class="btn btn-green btn-full">
             Späť na projekty
         </a>
-        {% endif %}
 
-    </div>
+    {% endif %}
+
+</div>
 </div>
 
 {% endblock %}
